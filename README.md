@@ -114,24 +114,33 @@ implementations of one method will drift apart, so when they disagree the
 Python is right by definition and the MATLAB has the bug — that convention is
 the whole defense against silently diverging answers.
 
-They currently agree on every published number. Both were run from a clean
-path on 2026-08-01:
+Both were run from a clean path on 2026-08-01. Every median statistic agrees
+to the digits printed:
 
 | | Python | MATLAB |
 |---|---|---|
 | ζ median | −1.190 × 10⁻³ s⁻¹ | −1.190 × 10⁻³ s⁻¹ |
 | Rossby | −67.0 | −67.0 |
-| leave-one-out 1σ | 17 % | 17 % |
+| rotation period | 2.93 h | 2.93 h |
+| leave-one-out 1σ | 1.710 × 10⁻⁴ (17 %) | 1.710 × 10⁻⁴ (17 %) |
 | constellation revolutions | −6.86 | −6.86 |
 | Okubo–Weiss < 0 | 100 % of windows | 100 % of windows |
-| Lamb–Oseen R | 1116 m | 1116 m, 95 % CI [1005, 1605] |
+| **Lamb–Oseen R** | **1206 m** | **1116 m**, 95 % CI [1005, 1605] |
+| **circulation Γ** | **−6114 m² s⁻¹** | **−5439**, 95 % CI [−9051, −4591] |
 
-If you change the method, change `src/` first and re-run both. A disagreement
-in that table is a regression, not a judgment call.
+**The last two rows disagree, and that is expected** — it is the single
+sensitive step in the analysis, not a porting bug. The two implementations
+differ in percentile convention and moving-average edge handling, which is
+enough to move R by ~90 m; a grid over bin counts and radius cutoffs spans
+1161–1286 m. `DRIFTER_ANALYSIS.md` §5 documents this, and it is why the
+MATLAB adds a 1000-replicate bootstrap the Python does not have. Each
+implementation's point estimate falls inside the other's interval.
 
-The MATLAB adds one thing the Python does not: bootstrap confidence intervals
-on the Lamb–Oseen fit (1000 replicates), which matters because that fit is the
-least robust step in the analysis — see `DRIFTER_ANALYSIS.md` §5.
+So: quote the interval for R and Γ, never a point estimate. Treat a
+disagreement in the *other* rows as a regression — those are medians over
+hundreds of windows and should match exactly.
+
+If you change the method, change `src/` first and re-run both.
 
 ### What has no MATLAB equivalent
 

@@ -23,21 +23,22 @@ and to derived products in this repository:
 
 Third-party data — NOT covered by the above
 -------------------------------------------
-  data/cordc_delivered/
-      NetCDF files as delivered by CORDC/Scripps. Included solely as
-      ground truth for the parser regression tests. Rights remain with
-      CORDC; contact cordc.wavebuoy@sio.ucsd.edu for terms of use.
-
   data/bathy/angaur_peleliu_crop.nc
-      Bathymetry attributed to the **Coral Reef Research Foundation (CRRF)**,
-      Koror, Palau -- https://coralreefpalau.org/
-      Cropped from Angaur_Peleliu_25m.nc. The full provenance chain for the
-      source DEM is not documented here; contact CRRF for terms of use before
-      redistributing the grid or publishing derived products. Attribute CRRF
-      in any figure or result that depends on it.
+      Bathymetry by the **Coral Reef Research Foundation (CRRF)**, Koror,
+      Palau -- https://coralreefpalau.org/
+      Cropped from Angaur_Peleliu_25m.nc. Attribute CRRF in any figure or
+      result that depends on it, and contact them for terms of use before
+      redistributing the grid.
 
 Not included, deliberately
 --------------------------
+  data/cordc_delivered/
+      The CORDC-delivered NetCDF files are NOT redistributed here. They are
+      only needed as ground truth for tests/test_mwb_dat.py, which skips
+      cleanly without them. Point it at your own copy:
+          python3 tests/test_mwb_dat.py <raw_dat_dir> <delivered.nc>
+
+
   papers/*.pdf
       Journal articles are copyrighted by their publishers and are NOT
       redistributed here. papers/README.md carries the full citations and

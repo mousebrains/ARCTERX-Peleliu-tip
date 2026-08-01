@@ -14,15 +14,23 @@ data volume mounted.
 ```bash
 pip install -r requirements.txt
 
-# 1. the parser reproduces the delivered CORDC files bit-for-bit
-python3 tests/test_mwb_dat.py
-
-# 2. the vorticity analysis (~30 s)
+# 1. the vorticity analysis (~30 s)
 python3 src/eddy_analysis.py --output eddy_out
 
-# 3. figures
+# 2. figures
 python3 src/eddy_summary_figure.py --input eddy_out
 python3 src/eddy_frame_scatter.py  --input eddy_out
+
+# 3. round-trip: the regenerated NetCDF matches the raw bursts
+python3 tests/test_mwb_nc.py data/drifters/mwb458d02_gps_timeseries.nc data/raw_dat/458
+```
+
+`tests/test_mwb_dat.py` additionally checks the parser against the
+CORDC-delivered NetCDF bit-for-bit. Those files are not redistributed here, so
+it skips unless you point it at your own copy:
+
+```bash
+python3 tests/test_mwb_dat.py data/raw_dat/458 /path/to/mwb458d02_gps_timeseries.nc
 ```
 
 Then read **`DRIFTER_ANALYSIS.md`** and **`PRESSURE_ANALYSIS.md`**. Both open
@@ -52,7 +60,7 @@ flow is not barotropic).
 ```
 src/          analysis modules; run any of them with --help
 matlab/       MATLAB port of the vorticity analysis, plus the original approach
-tests/        parser regression tests against the delivered CORDC files
+tests/        parser and round-trip regression tests
 tools/        make_data_subset.py — rebuilds data/ from the SeaChest archive
 data/         the vendored subset; see data/README.md for provenance
 papers/       citations, DOIs and BibTeX (no PDFs — see LICENSE-DATA)

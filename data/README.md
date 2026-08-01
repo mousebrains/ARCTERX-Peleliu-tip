@@ -11,8 +11,7 @@ script *is* the provenance record — read it if you need to know exactly what
 was kept.
 
 Licensing is **not** uniform here. Read `../LICENSE-DATA` before
-redistributing: `cordc_delivered/` is CORDC/Scripps, and `bathy/` is
-attributed to the Coral Reef Research Foundation (CRRF), Palau.
+redistributing: `bathy/` is Coral Reef Research Foundation (CRRF) data.
 
 ---
 
@@ -22,7 +21,6 @@ attributed to the Coral Reef Research Foundation (CRRF), Palau.
 |---|---|---|
 | `raw_dat/458/` | 19 MB | 117 raw `.dat` bursts, mwb458 deployment 2 |
 | `drifters/` | 28 MB | 4 regenerated CF-1.13 timeseries |
-| `cordc_delivered/` | 8.3 MB | 4 files as delivered by CORDC (test ground truth) |
 | `pressure/1min/` | 5 MB | 12 gauges, 1-minute block means |
 | `pressure/highrate/` | 1.6 MB | 2 short full-rate segments |
 | `adcp/` | 268 KB | C05 depth-averaged current + the event list |
@@ -53,7 +51,7 @@ raw data stay runnable without the archive:
 are dropped. Note the DEM is unreliable over steep reef — within 150 m of the
 Peleliu and Angaur gauges the relief is 18–59 m (`PRESSURE_ANALYSIS.md` §6).
 
-Attributed to the **Coral Reef Research Foundation (CRRF)**, Koror, Palau —
+By the **Coral Reef Research Foundation (CRRF)**, Koror, Palau —
 <https://coralreefpalau.org/>. Attribute CRRF in anything that depends on it,
 and see `../LICENSE-DATA` before redistributing the grid.
 
@@ -65,8 +63,9 @@ skewed — suspected hard-iron from the iron anchor beneath it — and the
 correction is `W · exp(−i·14.4°)` absolute. Left to the analysis so the raw
 instrument frame stays visible. See `PRESSURE_ANALYSIS.md` §4.
 
-**Excluded entirely**: `fits.mat` (72 MB, regenerable), 24 of the 28 delivered
-CORDC files (only 4 are used by the tests), and the journal PDFs (copyright —
+**Excluded entirely**: `fits.mat` (72 MB, regenerable), the CORDC-delivered
+NetCDF files (not ours to redistribute — `tests/test_mwb_dat.py` skips without
+them and takes a path to your own copy), and the journal PDFs (copyright —
 `papers/README.md` has the DOIs).
 
 ## Reading it

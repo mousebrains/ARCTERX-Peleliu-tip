@@ -157,7 +157,7 @@ Two examples that both produced fake discrepancies here:
 ### 3.6 File-specific gotchas
 
 - **`C05_2023.mat` `pressure`** is in **deca-pascals** and contains
-  `4294967286` fill values (uint32 overflow). `depth` is in metres but carries
+  `4294967286` fill values (uint32 overflow). `depth` is in meters but carries
   `0.000` for 181 out-of-water ensembles. Use `depth` with a `>5 m` mask.
 - **Pe2 segfaults inside HDF5 on `Dataset.close()`** after a large read
   ("There are 1 HDF5 objects open!"). The reads are correct. `pressure_array`
@@ -261,7 +261,7 @@ The east/west labels are **insensitive to the rotation** (0.0 % of ensembles
 change sign under it), because the flow is strongly rectilinear. The rotation
 matters for the axis bearing, not the classification.
 
-For May 2023, the subtidal daily means organise into clean regimes:
+For May 2023, the subtidal daily means organize into clean regimes:
 
 | dates | regime |
 |---|---|
@@ -323,7 +323,7 @@ Recording these so nobody spends a month rediscovering them.
 ### The eddy is not detectable in bottom pressure
 
 From the drifter-measured velocity profile, gradient-wind balance predicts a
-**4.1 cm depression at the eddy centre** (centrifugal beats Coriolis 24:1, so
+**4.1 cm depression at the eddy center** (centrifugal beats Coriolis 24:1, so
 it is a low regardless of rotation sense), falling to 2.5 cm at 1 km and
 0.85 cm at 2 km.
 
@@ -504,6 +504,6 @@ Consequences for 2025:
    mid-range, not near the radar. Tiles near the tower (where the radar is
    best) are ~6 km from C05 and cannot be validated tightly against it.
 4. The 2023 seven-platform ensemble is the only configuration that can
-   validate the radar *across* the channel. Use it to characterise radar skill
+   validate the radar *across* the channel. Use it to characterize radar skill
    as a function of range, then carry that characterisation into 2025 where
    only C05 remains.

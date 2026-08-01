@@ -15,12 +15,12 @@ Code: `src/mwb_dat.py`, `src/mwb_nc.py`, `src/eddy_kinematics.py`,
 
 Four CORDC Miniature Wave Buoys (mwb458, 788, 790, 793) were seeded into a
 vortex shed from the Peleliu tip. Between **2023-05-22 05:11 and 2023-05-23
-06:34 UTC** all four travelled with it. The eddy started 1.68 km from the Pe1
+06:34 UTC** all four traveled with it. The eddy started 1.68 km from the Pe1
 pressure gauge and tracked **west, bearing 266°, for 12 km** over 25.4 h.
 
 The buoys sample GPS position and Doppler velocity at 2 Hz in bursts of 2048
 samples — that block is the chunk the buoy uses for its onboard directional
-wave spectrum (§2), not a storage artefact.
+wave spectrum (§2), not a storage artifact.
 
 ## 2. The instrument records
 
@@ -47,7 +47,7 @@ MAD exactly 0) while the *interval* varies (1059–1225 s), which is
 `src/mwb_nc.py` decodes the raw bursts to CF-1.13 files. Against the delivered
 CORDC files this reproduces `time`, `lat`, `lon`, `u`, `v`, `w` and `numsats`
 **bit-for-bit** (max |difference| exactly 0 over 172,032 samples), and `sog`,
-`cog`, `pdop` to the delivered files' own quantisation.
+`cog`, `pdop` to the delivered files' own quantization.
 
 It also recovers **~38 % more data** — the delivered files trim bursts at both
 ends of each deployment — and keeps fields the delivered files drop entirely:
@@ -59,10 +59,24 @@ or 2).
 ## 3. The method
 
 The earlier approach (`matlab/explore_drifter_paths.m`) fits each drifter's
-*position* as a shared centre plus a per-drifter radius, taking the orbital
+*position* as a shared center plus a per-drifter radius, taking the orbital
 direction from the drifter's own velocity. Vorticity is then only reachable
-indirectly, and the model has a ±90° sign degeneracy — 9 % of fitted radii
-come out negative.
+indirectly, and the model has a ±90° sign degeneracy: nothing stops the fit
+from returning a negative radius and flipping the phase to compensate.
+
+How often that happens is itself diagnostic. Over 434 windows × 4 drifters
+(1736 fitted radii, `matlab/explore_drifter_paths.m` on the regenerated
+netCDF):
+
+| interval | fitted radii | negative |
+|---|---|---|
+| the eddy-coherent window (05-22 05:11 → 05-23 06:34) | 1216 | **11.9 %** |
+| outside it | 520 | **30.4 %** |
+| whole record | 1736 | 17.5 % |
+
+The degeneracy nearly triples where there is no coherent vortex to fit, which
+is the point: the model cannot tell you it has failed, it just returns a
+signed radius. The velocity method below has no such mode.
 
 Vorticity is a property of the **velocity** field, and these buoys measure
 velocity directly. So estimate it from the velocities, three ways, and
@@ -121,7 +135,7 @@ non-solid-body profile — outer drifters orbit more slowly than the core
 vorticity implies.
 
 Radial velocity is 4 % of azimuthal, confirming a coherent, non-dispersing
-vortex and validating the fitted centre.
+vortex and validating the fitted center.
 
 Three of the four drifters roughly **double their orbital radius** over the
 record (+111 %, +122 %, +178 %); mwb793d02 started near the core edge and
@@ -155,11 +169,11 @@ the isoperimetric quotient 4πA/P².
 (1, m, m, s); unscaled, `cond` reports the unit mismatch, ~2000, rather than
 the drifter geometry, ~2.
 
-**The centre needs an assumption, unavoidably.** At a single instant a uniform
-background flow and a displacement of the vortex centre are *exactly*
+**The center needs an assumption, unavoidably.** At a single instant a uniform
+background flow and a displacement of the vortex center are *exactly*
 degenerate: ω ẑ×(x−c) contains the constant −ω ẑ×c. We break it by low-passing
-the drifter-mean velocity over ~2 orbital periods, so every centre estimate is
-conditional on that. If the centre track looks wrong, suspect this first.
+the drifter-mean velocity over ~2 orbital periods, so every center estimate is
+conditional on that. If the center track looks wrong, suspect this first.
 
 ## 6. Established negatives
 
@@ -180,7 +194,7 @@ while `pdop` and `numsats` do not. It is in the regenerated netCDF; the
 delivered files drop it.
 
 **The eddy is invisible in bottom pressure.** Gradient-wind balance predicts a
-4.1 cm depression at the centre, ~1 cm at the nearest gauge's 1.68 km
+4.1 cm depression at the center, ~1 cm at the nearest gauge's 1.68 km
 approach, against a 3.3 cm *oceanographic* residual floor that no averaging
 removes. See `PRESSURE_ANALYSIS.md` §6.
 
@@ -200,4 +214,6 @@ translation. X-band radar can test the prediction out of sample —
 
 **MATLAB port** (`matlab/eddy_kinematics_drifters.m`) reproduces the Python to
 the digits shown in §4, and adds bootstrap CIs on the Lamb–Oseen fit. It needs
-Mapping, Statistics and Curve Fitting toolboxes.
+the Mapping, Statistics and Machine Learning, and Curve Fitting toolboxes.
+The Python is the reference implementation — see the parity table in
+`README.md` for what "reproduces" means and what to do when they disagree.

@@ -71,9 +71,14 @@
 % Drifters deployed on the date of interest
 drifters = append("mwb", ["458d02", "788d01", "790d01", "793d02"]);
 
-myPath  = fileparts(mfilename("fullpath")); % Script's path
-dataDir = myPath;                           % Where the NetCDF files live
-outDir  = myPath;                           % Where figures and fits.mat go
+% Paths are resolved relative to this script, so the repository can be
+% cloned anywhere and run without editing. matlab/ sits one level below the
+% repository root; the drifter NetCDF files live in data/drifters.
+myPath  = fileparts(mfilename("fullpath"));          % Script's path
+repoDir = fileparts(myPath);                         % Repository root
+dataDir = fullfile(repoDir, "data", "drifters");     % Where the NetCDF files live
+outDir  = fullfile(repoDir, "eddy_out_matlab");      % Where figures and fits.mat go
+if ~isfolder(outDir), mkdir(outDir); end
 
 smoothWidth = seconds(60);  % Low-pass width for velocity and position
 dtStep      = minutes(5);   % Time between the start of successive fit windows
@@ -131,7 +136,6 @@ windowWidth = round(smoothWidth / dt); % Samples, 120 at 2 Hz
 fprintf("%d drifters, %s to %s, dt = %s, smoothing window = %d samples\n", ...
     nDrifters, t0, t1, dt, windowWidth);
 
-error("Gotme");
 %% ------------------------------------------------------------------------
 %  Smooth, and build the local east/north frame
 %  ------------------------------------------------------------------------
@@ -233,26 +237,10 @@ fprintf("%.2f seconds for %d of %d fits\n", ...
     toc(tStart), size(centroids,1), numel(stimeWindows));
 
 %% ------------------------------------------------------------------------
-%  Use the projected center to recalculate radius for each drifter in
-%  the time window. This takes into account the moving eddy during the
-%  window duration.
-%  ------------------------------------------------------------------------
-
-radii = nan(nTimes, nDrifters); % A radius for each time window and drifter
-for index = 1:nDrifters
-    startTime = tic();
-    a = tbl{index}; %  drifter's information
-    name = sprintf("drifter_%d", index); % centroid column name
-    % Center at each instant in time, C2
-    a.xCenter = interp1(centroid.time, centroid.xCenter, a.time, "cubic");
-    a.yCenter = interp1(centroid.time, centroid.yCenter, a.time, "cubic"); 
-    a.dx = a.sx - a.xCenter;
-    a.dy = a.sy - a.yCenter;
-    a = a(~ismissing(a.dx) & ~isnan(a.dy),:)
-end % for index
-
-%% ------------------------------------------------------------------------
 %  Project each drifter into the eddy frame and rebuild the modeled track
+%
+%  This interpolates the fitted center onto every sample time, so a drifter's
+%  radius accounts for the eddy moving during the window.
 %  ------------------------------------------------------------------------
 
 tStart = tic();

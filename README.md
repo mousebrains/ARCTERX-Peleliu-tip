@@ -92,14 +92,55 @@ Without it, `pressure_array.load` says so rather than failing obscurely.
 
 ## MATLAB
 
-`matlab/eddy_kinematics_drifters.m` reproduces the Python analysis and adds
-bootstrap confidence intervals on the vortex-structure fit. Needs R2019b+ with
-the Mapping, Statistics and Curve Fitting toolboxes. Point `cfg.dataDir` at
-`data/drifters`.
+The vorticity analysis exists in both languages. Paths resolve relative to the
+script, so both run from a clone with nothing to edit:
 
-`matlab/explore_drifter_paths.m` is the earlier geometric approach, kept
-because `DRIFTER_ANALYSIS.md` §3 explains what it does and why the velocity
-method replaced it.
+```matlab
+run matlab/eddy_kinematics_drifters.m    % the analysis, ~1 min
+run matlab/explore_drifter_paths.m       % the earlier geometric approach
+```
+
+| script | toolboxes beyond base MATLAB |
+|---|---|
+| `eddy_kinematics_drifters.m` | Mapping, Statistics and Machine Learning, Curve Fitting |
+| `explore_drifter_paths.m` | Mapping, Parallel Computing (`parfor`; runs serially without it) |
+
+Written against R2026a. Output goes to `eddy_out_matlab/` (git-ignored).
+
+### Which one is authoritative
+
+**`src/` is the reference implementation; the MATLAB is a port.** Two
+implementations of one method will drift apart, so when they disagree the
+Python is right by definition and the MATLAB has the bug — that convention is
+the whole defense against silently diverging answers.
+
+They currently agree on every published number. Both were run from a clean
+path on 2026-08-01:
+
+| | Python | MATLAB |
+|---|---|---|
+| ζ median | −1.190 × 10⁻³ s⁻¹ | −1.190 × 10⁻³ s⁻¹ |
+| Rossby | −67.0 | −67.0 |
+| leave-one-out 1σ | 17 % | 17 % |
+| constellation revolutions | −6.86 | −6.86 |
+| Okubo–Weiss < 0 | 100 % of windows | 100 % of windows |
+| Lamb–Oseen R | 1116 m | 1116 m, 95 % CI [1005, 1605] |
+
+If you change the method, change `src/` first and re-run both. A disagreement
+in that table is a regression, not a judgment call.
+
+The MATLAB adds one thing the Python does not: bootstrap confidence intervals
+on the Lamb–Oseen fit (1000 replicates), which matters because that fit is the
+least robust step in the analysis — see `DRIFTER_ANALYSIS.md` §5.
+
+### What has no MATLAB equivalent
+
+**The entire pressure-array analysis** — `src/pressure_array.py` and
+everything in `PRESSURE_ANALYSIS.md`: harmonic fits, the co-tidal chart, the
+C05 rotation, the instrument noise floor. A MATLAB-only user gets the drifter
+half of the project and needs Python for the other half. Porting it is not
+planned; the tidal fitting leans on `wamos_tpw.tides` and its Rayleigh and
+conditioning guards, which have no MATLAB counterpart.
 
 ## Related work
 

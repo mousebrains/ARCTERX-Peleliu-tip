@@ -228,8 +228,12 @@
 %  ------------------------------------------------------------------------
 
 cfg = struct(); % Configuration parameters
-cfg.dataDir        = string(fileparts(mfilename("fullpath")));
-cfg.outDir         = fullfile(cfg.dataDir, "eddy_out_matlab");
+% Paths are resolved relative to this script, so the repository can be
+% cloned anywhere and the script run without editing. matlab/ is one level
+% below the repository root, and the drifter NetCDF files live in data/.
+cfg.repo           = string(fileparts(fileparts(mfilename("fullpath"))));
+cfg.dataDir        = fullfile(cfg.repo, "data", "drifters");
+cfg.outDir         = fullfile(cfg.repo, "eddy_out_matlab");
 cfg.drifters       = append("mwb", ["458d02", "788d01", "790d01", "793d02"]);
 cfg.tStart         = datetime(2023,5,22,05,10,54, TimeZone="UTC");
 cfg.tEnd           = datetime(2023,5,23,06,34,00, TimeZone="UTC");

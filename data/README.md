@@ -11,8 +11,8 @@ script *is* the provenance record — read it if you need to know exactly what
 was kept.
 
 Licensing is **not** uniform here. Read `../LICENSE-DATA` before
-redistributing: `cordc_delivered/` is third-party and `bathy/` has unverified
-provenance.
+redistributing: `cordc_delivered/` is CORDC/Scripps, and `bathy/` is
+attributed to the Coral Reef Research Foundation (CRRF), Palau.
 
 ---
 
@@ -52,6 +52,10 @@ raw data stay runnable without the archive:
 (6.88–7.05 °N, 134.05–134.28 °E), `Z` only, float32. The `xUTM`/`yUTM` grids
 are dropped. Note the DEM is unreliable over steep reef — within 150 m of the
 Peleliu and Angaur gauges the relief is 18–59 m (`PRESSURE_ANALYSIS.md` §6).
+
+Attributed to the **Coral Reef Research Foundation (CRRF)**, Koror, Palau —
+<https://coralreefpalau.org/>. Attribute CRRF in anything that depends on it,
+and see `../LICENSE-DATA` before redistributing the grid.
 
 **C05: 56 MB → 268 KB.** Depth-averaged east/north velocity, depth,
 temperature and the range bins. The per-bin velocity profiles are not kept.

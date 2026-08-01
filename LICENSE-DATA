@@ -29,9 +29,12 @@ Third-party data — NOT covered by the above
       CORDC; contact cordc.wavebuoy@sio.ucsd.edu for terms of use.
 
   data/bathy/angaur_peleliu_crop.nc
-      Cropped from Angaur_Peleliu_25m.nc. Provenance of the source DEM is
-      not established in this repository; confirm its licence before
-      redistributing or publishing derived products.
+      Bathymetry attributed to the **Coral Reef Research Foundation (CRRF)**,
+      Koror, Palau -- https://coralreefpalau.org/
+      Cropped from Angaur_Peleliu_25m.nc. The full provenance chain for the
+      source DEM is not documented here; contact CRRF for terms of use before
+      redistributing the grid or publishing derived products. Attribute CRRF
+      in any figure or result that depends on it.
 
 Not included, deliberately
 --------------------------

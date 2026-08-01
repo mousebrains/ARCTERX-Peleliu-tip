@@ -177,6 +177,13 @@ def bathymetry(archive: str, out_path: str) -> None:
             v.long_name = long_name
         out.title = "Angaur/Peleliu 25 m DEM, cropped"
         out.source = "Angaur_Peleliu_25m.nc, cropped and cast to float32"
+        out.institution = "Coral Reef Research Foundation (CRRF), Koror, Palau"
+        out.references = "https://coralreefpalau.org/"
+        out.acknowledgement = (
+            "Bathymetry attributed to the Coral Reef Research Foundation "
+            "(CRRF). Full provenance chain not documented; contact CRRF for "
+            "terms of use before redistributing or publishing derived products."
+        )
         out.comment = ("DEM is unreliable over steep reef: within 150 m of the "
                        "Peleliu and Angaur gauges the relief is 18-59 m. See "
                        "PRESSURE_ANALYSIS.md section 6.")

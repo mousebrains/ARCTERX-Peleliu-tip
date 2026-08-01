@@ -1,0 +1,23 @@
+# Regenerable outputs
+eddy_out/
+eddy_out_matlab/
+*.png.tmp
+
+# Copyrighted journal PDFs: never commit. See LICENSE-DATA.
+papers/*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# MATLAB
+*.asv
+*.mat
+
+# macOS
+.DS_Store

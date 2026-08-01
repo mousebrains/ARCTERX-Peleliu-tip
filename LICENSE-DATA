@@ -1,0 +1,42 @@
+Data licence
+============
+
+The CODE in this repository is under the MIT License (see LICENSE).
+The DATA under data/ is licensed separately, and not all of it is ours to
+license. Read this before redistributing anything from data/.
+
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+---------------------------------------------------------
+Applies to observational data collected by the ARCTERX 2023 Wake programme
+and to derived products in this repository:
+
+  data/pressure/    bottom-pressure gauges (12 sites), decimated
+  data/adcp/        C05 RDI Workhorse, depth-averaged
+  data/drifters/    mwb GPS timeseries regenerated from the raw instrument
+                    records by src/mwb_nc.py
+  data/raw_dat/     raw mwb .dat burst files
+  data/eddy_kinematics.npz
+
+  Full text: https://creativecommons.org/licenses/by/4.0/
+  Cite as: ARCTERX 2023 Wake experiment, Peleliu tip. Coastal Observing
+  Research and Development Center, Scripps Institution of Oceanography.
+
+Third-party data — NOT covered by the above
+-------------------------------------------
+  data/cordc_delivered/
+      NetCDF files as delivered by CORDC/Scripps. Included solely as
+      ground truth for the parser regression tests. Rights remain with
+      CORDC; contact cordc.wavebuoy@sio.ucsd.edu for terms of use.
+
+  data/bathy/angaur_peleliu_crop.nc
+      Cropped from Angaur_Peleliu_25m.nc. Provenance of the source DEM is
+      not established in this repository; confirm its licence before
+      redistributing or publishing derived products.
+
+Not included, deliberately
+--------------------------
+  papers/*.pdf
+      Journal articles are copyrighted by their publishers and are NOT
+      redistributed here. papers/README.md carries the full citations and
+      DOIs, and papers/fetch_papers.sh retrieves them from a machine with
+      institutional access. See papers/.gitignore.

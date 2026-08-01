@@ -1,0 +1,103 @@
+% References for the Peleliu tip-vortex drifter analysis.
+% See README.md in this directory for what each one implements.
+%
+% Volume/issue/page for okubo1976, molinari1975, okubo1970, weiss1991 and
+% efron1983 were read directly off each article's title page (PDFs in this
+% directory), not from a publisher web record.
+% saffman1992 is NOT yet verified -- the copy is outstanding; confirm the
+% edition, page count and the specific section for the Lamb-Oseen profile.
+
+@article{okubo1976,
+  author  = {Okubo, Akira and Ebbesmeyer, Curtis C.},
+  title   = {Determination of vorticity, divergence and deformation rates from
+             analysis of drogue observations},
+  journal = {Deep-Sea Research},
+  year    = {1976},
+  volume  = {23},
+  number  = {4},
+  pages   = {349--352},
+  doi     = {10.1016/0011-7471(76)90875-5},
+  note    = {Four-drogue cluster method; its Eqs. (1)-(2) are the affine model
+             implemented in fit_gradient().  Independent co-discovery with
+             molinari1975, per the footnote on p. 349}
+}
+
+@article{molinari1975,
+  author  = {Molinari, Robert and Kirwan, A. D., Jr.},
+  title   = {Calculations of differential kinematic properties from {Lagrangian}
+             observations in the western {Caribbean} {Sea}},
+  journal = {Journal of Physical Oceanography},
+  year    = {1975},
+  volume  = {5},
+  number  = {3},
+  pages   = {483--491},
+  doi     = {10.1175/1520-0485(1975)005<0483:CODKPF>2.0.CO;2},
+  note    = {Least-squares affine velocity model over a drifter cluster}
+}
+
+@article{okubo1970,
+  author  = {Okubo, Akira},
+  title   = {Horizontal dispersion of floatable particles in the vicinity of
+             velocity singularities such as convergences},
+  journal = {Deep-Sea Research and Oceanographic Abstracts},
+  year    = {1970},
+  volume  = {17},
+  number  = {3},
+  pages   = {445--454},
+  doi     = {10.1016/0011-7471(70)90059-8},
+  note    = {The Okubo half of the Okubo--Weiss parameter}
+}
+
+@article{weiss1991,
+  author  = {Weiss, John},
+  title   = {The dynamics of enstrophy transfer in two-dimensional hydrodynamics},
+  journal = {Physica D: Nonlinear Phenomena},
+  year    = {1991},
+  volume  = {48},
+  number  = {2--3},
+  pages   = {273--294},
+  doi     = {10.1016/0167-2789(91)90088-Q},
+  note    = {Written 1981 as a La Jolla Institute preprint and unpublished until
+             this printing, hence the occasional citation as Weiss (1981)}
+}
+
+@article{efron1983,
+  author  = {Efron, Bradley and Gong, Gail},
+  title   = {A leisurely look at the bootstrap, the jackknife, and
+             cross-validation},
+  journal = {The American Statistician},
+  year    = {1983},
+  volume  = {37},
+  number  = {1},
+  pages   = {36--48},
+  doi     = {10.1080/00031305.1983.10483087},
+  jstor   = {2685844},
+  note    = {Leave-one-out uncertainty used for the vorticity error bar}
+}
+
+@book{saffman1992,
+  author    = {Saffman, P. G.},
+  title     = {Vortex Dynamics},
+  publisher = {Cambridge University Press},
+  year      = {1992},
+  pages     = {311},
+  isbn      = {978-0-521-42058-7},
+  note      = {Lamb--Oseen vortex profile.  CITATION UNVERIFIED -- copy pending}
+}
+
+@misc{cfconventions113,
+  title  = {{NetCDF} {Climate} and {Forecast} ({CF}) Metadata Conventions,
+            Version 1.13},
+  author = {{CF Conventions Committee}},
+  year   = {2025},
+  month  = {dec},
+  url    = {https://cfconventions.org/Data/cf-conventions/cf-conventions-1.13/cf-conventions.html}
+}
+
+@misc{cfstandardnames94,
+  title  = {{CF} Standard Name Table, Version 94},
+  author = {{CF Conventions Committee}},
+  year   = {2026},
+  month  = {jun},
+  url    = {https://cfconventions.org/Data/cf-standard-names/current/src/cf-standard-name-table.xml}
+}

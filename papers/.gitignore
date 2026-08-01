@@ -1,0 +1,4 @@
+# Journal articles are copyrighted by their publishers and must not be
+# committed. README.md has the citations and DOIs; fetch_papers.sh pulls the
+# PDFs on a machine with institutional access.
+*.pdf

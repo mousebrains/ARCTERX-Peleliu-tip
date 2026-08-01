@@ -23,6 +23,9 @@ python3 src/eddy_frame_scatter.py  --input eddy_out
 
 # 3. round-trip: the regenerated NetCDF matches the raw bursts
 python3 tests/test_mwb_nc.py data/drifters/mwb458d02_gps_timeseries.nc data/raw_dat/458
+
+# 4. null tests: does the pipeline recover a vortex whose answer we know?
+python3 tests/test_synthetic_recovery.py
 ```
 
 `tests/test_mwb_dat.py` additionally checks the parser against the
@@ -36,6 +39,10 @@ python3 tests/test_mwb_dat.py data/raw_dat/458 /path/to/mwb458d02_gps_timeseries
 Then read **`DRIFTER_ANALYSIS.md`** and **`PRESSURE_ANALYSIS.md`**. Both open
 with the traps rather than the results, because most of the wrong answers here
 looked like successes while they were wrong.
+
+**`docs/`** derives the mathematics behind every method — the velocity-gradient
+tensor, Stokes' theorem, Lamb-Oseen, harmonic analysis, the pressure response
+function — and says where each one breaks. Start at `docs/README.md`.
 
 ## What was found
 
@@ -59,8 +66,9 @@ flow is not barotropic).
 
 ```
 src/          analysis modules; run any of them with --help
+docs/         the mathematics and reasoning behind every method
 matlab/       MATLAB port of the vorticity analysis, plus the original approach
-tests/        parser and round-trip regression tests
+tests/        parser, round-trip and synthetic-recovery tests
 tools/        make_data_subset.py — rebuilds data/ from the SeaChest archive
 data/         the vendored subset; see data/README.md for provenance
 papers/       citations, DOIs and BibTeX (no PDFs — see LICENSE-DATA)
@@ -157,7 +165,7 @@ The X-band radar pipeline lives in a separate repository (`wamos_tpw`), which
 also carries the tidal-harmonic module (`wamos_tpw.tides`) used here for the
 constituent fits and its Rayleigh/conditioning guards.
 
-## Licences
+## Licenses
 
 Code is MIT (`LICENSE`). Data is **not uniformly licensed** — read
 `LICENSE-DATA` before redistributing anything under `data/`. Journal PDFs are

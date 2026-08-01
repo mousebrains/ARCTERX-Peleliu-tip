@@ -397,23 +397,30 @@ def write_netcdf(path, fields, files, *, serial, deployment,
         # GPS accuracy estimates, DOP, satellite counts and receiver bitfields
         # have none in the CF table (checked against v94), and inventing one
         # would break CF compliance to satisfy an ACDD recommendation.
-        for name, units, ln, sn, cct in (
+        # CF 4.3: a variable carrying a vertical-coordinate standard name must
+        # also declare `positive`.  Both of these are heights measured upward
+        # from their respective datums, so both get positive = "up".  Omitting
+        # it on hmsl (standard_name "altitude") is a hard CF error, caught by
+        # the IOOS compliance-checker at cf:1.11 but not by cfchecker at 1.8.
+        for name, units, ln, sn, cct, pos in (
                 ("height", "m", "height above the WGS-84 ellipsoid",
-                 "height_above_reference_ellipsoid", "physicalMeasurement"),
+                 "height_above_reference_ellipsoid", "physicalMeasurement", "up"),
                 ("hmsl", "m", "height above mean sea level",
-                 "altitude", "physicalMeasurement"),
+                 "altitude", "physicalMeasurement", "up"),
                 ("h_acc", "m", "GPS horizontal accuracy estimate",
-                 None, "qualityInformation"),
+                 None, "qualityInformation", None),
                 ("v_acc", "m", "GPS vertical accuracy estimate",
-                 None, "qualityInformation"),
+                 None, "qualityInformation", None),
                 ("s_acc", "m s-1", "GPS speed accuracy estimate",
-                 None, "qualityInformation"),
+                 None, "qualityInformation", None),
                 ("head_acc", "degree", "GPS heading accuracy estimate",
-                 None, "qualityInformation")):
+                 None, "qualityInformation", None)):
             attrs = {"units": units, "long_name": ln,
                      "coverage_content_type": cct, **coords}
             if sn:
                 attrs["standard_name"] = sn
+            if pos:
+                attrs["positive"] = pos
             w.var(name, "f4", DIMS, attrs, data=f4(name), fill=FILL_F4)
         for name, dtype, fill, units, ln in (
                 ("t_acc", "i4", FILL_I4, "ns", "GPS time accuracy estimate"),

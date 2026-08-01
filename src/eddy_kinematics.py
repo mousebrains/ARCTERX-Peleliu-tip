@@ -206,7 +206,6 @@ def fit_gradient(t, x, y, u, v, window_s=3600.0, step_s=None, time_term=True,
             "cond", "rms", "ndrift", "nobs", "xc", "yc")
     out = {k: np.full(len(tc), np.nan) for k in keys}
     grad = np.full((len(tc), 2, 2), np.nan)
-    gcov = np.full((len(tc), 6, 6), np.nan)
 
     for i, t0 in enumerate(tc):
         m = np.abs(t - t0) <= half
@@ -341,7 +340,12 @@ def circulation_kinematics(t, x, y, u, v, min_quality=0.10):
     divided by the enclosed area; the divergence theorem gives the
     area-averaged divergence as the outward flux divided by the area.  Both use
     the drifter polygon directly and share no machinery with the least-squares
-    fit, so they are an independent check on it.  Requires all four drifters.
+    fit, so they are an independent check on it.
+
+    Three vertices are enough (that is what circulation_jackknife exploits), so
+    an epoch where one drifter has dropped out still returns a value -- from a
+    triangle, over a different area, not from the quadrilateral.  Callers that
+    need a homogeneous series must check ``n_vertices``.
     """
     n = len(t)
     zeta = np.full(n, np.nan)
@@ -349,11 +353,13 @@ def circulation_kinematics(t, x, y, u, v, min_quality=0.10):
     area = np.full(n, np.nan)
     aspect = np.full(n, np.nan)
     qual = np.full(n, np.nan)
+    nvert = np.zeros(n, int)
     for i in range(n):
         ok = (np.isfinite(x[i]) & np.isfinite(y[i])
               & np.isfinite(u[i]) & np.isfinite(v[i]))
         if ok.sum() < 3:
             continue
+        nvert[i] = ok.sum()
         xs, ys, us, vs = x[i][ok], y[i][ok], u[i][ok], v[i][ok]
         o = _order_ccw(xs, ys)
         xs, ys, us, vs = xs[o], ys[o], us[o], vs[o]
@@ -369,10 +375,10 @@ def circulation_kinematics(t, x, y, u, v, min_quality=0.10):
         zeta[i], delta[i], area[i] = circ / A, flux / A, A
         # cluster shape: ratio of principal axes of the position covariance
         c = np.cov(np.vstack([xs, ys]))
-        w = np.linalg.eigvalsh(c)
-        aspect[i] = np.sqrt(max(w, default=np.nan) / max(w.min(), 1e-12)) \
-            if np.ndim(w) == 0 else np.sqrt(w.max() / max(w.min(), 1e-12))
-    return dict(zeta=zeta, delta=delta, area=area, aspect=aspect, quality=qual)
+        w = np.linalg.eigvalsh(c)          # always a length-2 vector here
+        aspect[i] = np.sqrt(w.max() / max(w.min(), 1e-12))
+    return dict(zeta=zeta, delta=delta, area=area, aspect=aspect, quality=qual,
+                n_vertices=nvert)
 
 
 def circulation_jackknife(t, x, y, u, v):
@@ -416,11 +422,20 @@ def rotation_rate(t, x, y):
     n, nd = x.shape
     xc, yc = np.nanmean(x, axis=1), np.nanmean(y, axis=1)
     ang = np.arctan2(y - yc[:, None], x - xc[:, None])
-    th = np.full(n, np.nan)
+    # Unwrap each drifter over ITS OWN finite samples and reference it to its
+    # own start.  np.unwrap propagates a NaN through everything after it, so
+    # unwrapping the raw column and summing across drifters let a single
+    # missing sample in one drifter destroy the whole record: on this data set
+    # one injected NaN moved the total from -6.86 turns to -1.24 and left only
+    # 14% of the series finite, silently.
+    rel = np.full((n, nd), np.nan)
     for j in range(nd):
-        a = np.unwrap(ang[:, j])
-        th = a if j == 0 else th + a
-    th /= nd
+        ok = np.isfinite(ang[:, j])
+        if ok.sum() < 2:
+            continue
+        a = np.unwrap(ang[ok, j])
+        rel[ok, j] = a - a[0]
+    th = np.nanmean(rel, axis=1) if np.isfinite(rel).any() else np.full(n, np.nan)
     ts = (t - t[0]) / 1000.0
     ok = np.isfinite(th)
     om = np.full(n, np.nan)

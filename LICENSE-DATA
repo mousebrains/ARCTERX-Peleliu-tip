@@ -26,9 +26,9 @@ Third-party data — NOT covered by the above
   data/bathy/angaur_peleliu_crop.nc
       Bathymetry by the **Coral Reef Research Foundation (CRRF)**, Koror,
       Palau -- https://coralreefpalau.org/
-      Cropped from Angaur_Peleliu_25m.nc. Attribute CRRF in any figure or
-      result that depends on it, and contact them for terms of use before
-      redistributing the grid.
+      Cropped from Angaur_Peleliu_25m.nc. Redistributed here with CRRF's
+      permission, confirmed with them 2026-08-01. Attribute CRRF in any
+      figure, publication or derived product that depends on it.
 
 Not included, deliberately
 --------------------------

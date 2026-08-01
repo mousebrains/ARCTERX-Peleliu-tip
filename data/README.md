@@ -52,8 +52,8 @@ are dropped. Note the DEM is unreliable over steep reef — within 150 m of the
 Peleliu and Angaur gauges the relief is 18–59 m (`PRESSURE_ANALYSIS.md` §6).
 
 By the **Coral Reef Research Foundation (CRRF)**, Koror, Palau —
-<https://coralreefpalau.org/>. Attribute CRRF in anything that depends on it,
-and see `../LICENSE-DATA` before redistributing the grid.
+<https://coralreefpalau.org/>, redistributed here with their permission.
+Attribute CRRF in anything that depends on it.
 
 **C05: 56 MB → 268 KB.** Depth-averaged east/north velocity, depth,
 temperature and the range bins. The per-bin velocity profiles are not kept.

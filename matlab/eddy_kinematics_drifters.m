@@ -203,7 +203,9 @@
 %     drifter-mean velocity over several orbital periods, so every center
 %     estimate is conditional on that.
 %   * A near-collinear cluster makes Gamma/Area blow up; epochs whose polygon
-%     quality 4*pi*A/P^2 falls below cfg.minQuality are rejected.
+%     quality 4*pi*A/P^2 falls below cfg.minQuality are rejected, as are those
+%     whose minor axis (sqrt of the smaller position-covariance eigenvalue)
+%     falls below cfg.minMinorAxis -- see Spydell et al. (2019).
 %
 % REFERENCES  (PDFs and BibTeX in ./papers, see papers/README.md)
 %   Okubo, A., and C. C. Ebbesmeyer, 1976: Determination of vorticity,
@@ -242,6 +244,11 @@ cfg.window         = minutes(30);   % least-squares window width
 cfg.step           = minutes(10);   % spacing between successive windows
 cfg.transPeriod    = hours(6);      % low-pass for eddy translation (~2 orbits)
 cfg.minQuality     = 0.10;          % reject polygons flatter than 4*pi*A/P^2
+cfg.minMinorAxis   = 50;            % m; reject clusters narrower than this.
+                                    % Spydell et al. (2019) Eq. (16) gives
+                                    % sigma_zeta ~ sigma_u/l_a, so narrowness --
+                                    % not area or ellipticity -- sets the
+                                    % vorticity error; below 50 m it exceeds 5f.
 cfg.maxGap         = minutes(30);   % never interpolate a drifter this far
 cfg.snrCenter      = 3;             % require |zeta| > snr * its formal error
 cfg.maxDispScales  = 3;             % reject a center this many cluster widths out
@@ -315,8 +322,8 @@ fprintf("Common grid: %d epochs at %s, %s to %s\n", ...
 %  Estimator 1 (PRIMARY): circulation and flux around the drifter polygon
 %  ------------------------------------------------------------------------
 
-circ = circulationKinematics(X, Y, U, V, cfg.minQuality);
-jack = circulationJackknife(X, Y, U, V, cfg.minQuality);
+circ = circulationKinematics(X, Y, U, V, cfg.minQuality, cfg.minMinorAxis);
+jack = circulationJackknife(X, Y, U, V, cfg.minQuality, cfg.minMinorAxis);
 
 %% ------------------------------------------------------------------------
 %  Estimator 2: least-squares velocity gradient
@@ -521,7 +528,7 @@ P = perimeter(pgon);
 if P > 0; q = 4*pi*A/P^2; end
 end % polygonQuality
 
-function out = circulationKinematics(X, Y, U, V, minQuality)
+function out = circulationKinematics(X, Y, U, V, minQuality, minMinorAxis)
 % CIRCULATIONKINEMATICS  Vorticity and divergence by contour integral.
 %
 %   Stokes' theorem:      zeta_mean  = (1/A) * closed integral of u . dl
@@ -537,25 +544,28 @@ arguments (Input)
     U double
     V double
     minQuality (1,1) double
+    minMinorAxis (1,1) double = 50
 end % arguments Input
 arguments (Output)
-    out (1,1) struct                      % fields zeta, delta, area, quality
+    out (1,1) struct                      % zeta, delta, area, quality, minorAxis
 end % arguments Output
 
 nT = size(X,1);
-[zeta, delta, areaOut, quality] = deal(nan(nT,1));
+[zeta, delta, areaOut, quality, minorAxis] = deal(nan(nT,1));
 
 for k = 1:nT
     ok = isfinite(X(k,:)) & isfinite(Y(k,:)) & isfinite(U(k,:)) & isfinite(V(k,:));
     if nnz(ok) < 3; continue; end
-    [zeta(k), delta(k), areaOut(k), quality(k)] = ...
-        loopIntegral(X(k,ok).', Y(k,ok).', U(k,ok).', V(k,ok).', minQuality);
+    [zeta(k), delta(k), areaOut(k), quality(k), minorAxis(k)] = ...
+        loopIntegral(X(k,ok).', Y(k,ok).', U(k,ok).', V(k,ok).', ...
+                     minQuality, minMinorAxis);
 end % for k
 
-out = struct("zeta", zeta, "delta", delta, "area", areaOut, "quality", quality);
+out = struct("zeta", zeta, "delta", delta, "area", areaOut, ...
+             "quality", quality, "minorAxis", minorAxis);
 end % circulationKinematics
 
-function [zeta, delta, A, q] = loopIntegral(xs, ys, us, vs, minQuality)
+function [zeta, delta, A, q, la] = loopIntegral(xs, ys, us, vs, minQuality, minMinorAxis)
 % LOOPINTEGRAL  One epoch of the contour integrals.  Shared with the jackknife.
 arguments (Input)
     xs (:,1) double
@@ -563,15 +573,17 @@ arguments (Input)
     us (:,1) double
     vs (:,1) double
     minQuality (1,1) double
+    minMinorAxis (1,1) double = 50
 end % arguments Input
 arguments (Output)
     zeta (1,1) double                     % vorticity, 1/s (NaN if rejected)
     delta (1,1) double                    % divergence, 1/s (NaN if rejected)
     A (1,1) double {mustBeNonnegative}    % polygon area, m^2
     q (1,1) double {mustBeNonnegative}    % polygon quality, 0..1
+    la (1,1) double {mustBeNonnegative}   % cluster minor axis, m
 end % arguments Output
 [zeta, delta] = deal(NaN);
-[A, q] = deal(0);
+[A, q, la] = deal(0);
 
 % Order the vertices counterclockwise about their centroid.  Out of order, the
 % polygon self-intersects and both area and circulation come out wrong.
@@ -579,7 +591,13 @@ end % arguments Output
 xs = xs(order); ys = ys(order); us = us(order); vs = vs(order);
 
 [q, A] = polygonQuality(xs, ys);
-if A < 1 || q < minQuality; return; end
+% Minor axis: sqrt of the smaller eigenvalue of the position covariance, so it
+% is a length in metres.  Recorded before the gate so a rejection can be
+% diagnosed afterwards.  cov() normalises by N-1, so la is not comparable
+% between the 4-drifter polygon and the 3-drifter jackknife triangles.
+ev = sort(eig(cov([xs ys])));
+la = sqrt(max(ev(1), 0));
+if A < 1 || q < minQuality || la < minMinorAxis; return; end
 
 xn = circshift(xs,-1); yn = circshift(ys,-1);
 un = circshift(us,-1); vn = circshift(vs,-1);
@@ -591,7 +609,7 @@ zeta  = circulation / A;
 delta = flux / A;
 end % loopIntegral
 
-function out = circulationJackknife(X, Y, U, V, minQuality)
+function out = circulationJackknife(X, Y, U, V, minQuality, minMinorAxis)
 % CIRCULATIONJACKKNIFE  Leave-one-drifter-out spread of the vorticity.
 %
 %   Four drifters give four distinct triangles.  If the velocity field really
@@ -611,6 +629,7 @@ arguments (Input)
     U double
     V double
     minQuality (1,1) double
+    minMinorAxis (1,1) double = 50
 end % arguments Input
 arguments (Output)
     out (1,1) struct                      % fields all, zeta, spread
@@ -623,7 +642,8 @@ for k = 1:nT
     M = [X(k,:).', Y(k,:).', U(k,:).', V(k,:).'];
     if any(~isfinite(M), "all"); continue; end
     all4(k,:) = jackknife(@(m) ...
-        loopIntegral(m(:,1), m(:,2), m(:,3), m(:,4), minQuality), M).';
+        loopIntegral(m(:,1), m(:,2), m(:,3), m(:,4), ...
+                     minQuality, minMinorAxis), M).';
 end % for k
 
 % Median and MAD, not mean and standard deviation: with only four triangles a

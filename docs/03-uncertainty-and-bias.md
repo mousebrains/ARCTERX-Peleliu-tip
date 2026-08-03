@@ -71,7 +71,7 @@ With only four values a single near-degenerate triangle would otherwise
 dominate both moments. The 1.4826 converts MAD to a Gaussian-equivalent
 standard deviation.
 
-Result: **17 % of $|\zeta|$**, about three times the formal error. That is the
+Result: **16 % of $|\zeta|$**, about three times the formal error. That is the
 number `DRIFTER_ANALYSIS.md` quotes, and it is the right one to quote of the
 two.
 
@@ -98,7 +98,7 @@ entirely common-mode. As noise grows the jackknife starts to see it, but even
 at 0.10 m s⁻¹ (well above the observed 0.064 m s⁻¹ fit residual) it captures
 only ~62 % of the true error.
 
-**Interpretation for this project**: the quoted ±17 % is a *precision*
+**Interpretation for this project**: the quoted ±16 % is a *precision*
 estimate. Total accuracy is roughly a factor of two worse, i.e. of order
 ±30 %, once the common-mode terms of §3.4 are included.
 
@@ -122,7 +122,7 @@ quadrature error and nothing else.
 **Result: $|\zeta|$ is underestimated by 3.8 %** (median; IQR −7.5 % to −1.2 %,
 n = 354). Correcting:
 
-$$\zeta = -1.190\times10^{-3} \;\longrightarrow\; -1.236\times10^{-3}, \qquad Ro = -67.0 \;\longrightarrow\; -69.6$$
+$$\zeta = -1.187\times10^{-3} \;\longrightarrow\; -1.233\times10^{-3}, \qquad Ro = -66.9 \;\longrightarrow\; -69.5$$
 
 Two things are worth noting:
 
@@ -135,7 +135,7 @@ Two things are worth noting:
   for round polygons and −3.64 % for elongated ones — essentially identical,
   which disproves the natural guess that elongation drives it.
 
-3.8 % is comfortably inside the ±17 % precision, so **the headline number
+3.8 % is comfortably inside the ±16 % precision, so **the headline number
 stands**. But it is a bias, so it belongs in the accuracy budget rather than
 being absorbed into the noise.
 
@@ -176,22 +176,25 @@ two main choices, both varied over their plausible range:
 
 | blocks/burst | averaging | median $\zeta$ | change |
 |---|---|---|---|
-| 2 | 511.8 s | −1.1890 × 10⁻³ | +0.09 % |
-| 4 | 255.9 s | −1.1901 × 10⁻³ | — |
-| 8 | 127.9 s | −1.1969 × 10⁻³ | −0.57 % |
-| 16 | 64.0 s | −1.1922 × 10⁻³ | −0.17 % |
+| 2 | 511.8 s | −1.1884 × 10⁻³ | −0.08 % |
+| 4 | 255.9 s | −1.1874 × 10⁻³ | — |
+| 8 | 127.9 s | −1.1942 × 10⁻³ | −0.57 % |
+| 16 | 64.0 s | −1.1888 × 10⁻³ | −0.12 % |
 
 **0.6 % across a 16× range.** The wave band and the eddy band are cleanly
 separated, which is the whole reason this works.
 
-**Polygon quality gate**: 1.5 % across $Q_{\min} \in [0, 0.3]$ — see §1.6.
+**Polygon quality gate**: 1.3 % across $Q_{\min} \in [0, 0.3]$ — see §1.6.
 
-Neither is doing any work in setting the answer.
+**Cluster minor-axis gate**: 1.3 % across $l_{a,\min} \in [0, 150]$ m — also
+§1.6. Enabling it at 50 m moved the median by 0.23 %.
+
+None of the three is doing any work in setting the answer.
 
 ## 3.7 What to write in a paper
 
 > Relative vorticity $\zeta = -1.19\times10^{-3}\ \mathrm{s^{-1}}$
-> (Rossby $-67$), with a leave-one-out precision of 17 % and an estimated
+> (Rossby $-67$), with a leave-one-out precision of 16 % and an estimated
 > systematic underestimate of 4 % from the finite-difference quadrature over a
 > four-vertex polygon comparable in size to the vortex core. Total accuracy is
 > of order 30 %.

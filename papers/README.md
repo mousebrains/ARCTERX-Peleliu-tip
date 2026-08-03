@@ -817,11 +817,15 @@ current gate        n=343   median zeta = -1.190e-3   Ro = -67.0
 p95 |zeta|          2.42e-3  ->  2.31e-3   (-4.5 %)
 ```
 
-**The headline is untouched and the tail tightens.** This is a cheap,
-principled improvement; it is not applied, because changing gates changes
-published numbers and that is a decision, not a detail. The 0.23 % result is
-also a useful null test in its own right: it confirms the medians are robust to
-the gate, which is what `DRIFTER_ANALYSIS.md` §5 claims.
+**The headline is untouched and the tail tightens — so it is now applied.**
+`circulation_kinematics(..., min_minor_axis=50.0)` in `src/eddy_kinematics.py`,
+mirrored in the MATLAB port, with a sensitivity sweep in
+`docs/01-velocity-gradient-kinematics.md` §1.6 (1.3 % across 0–150 m). The
+published median moved from −1.1901 × 10⁻³ to −1.1874 × 10⁻³ (Ro −67.0 →
+−66.9), the leave-one-out spread from 17 % to 16 %, and the 5th percentile of
+|ζ| tightened by 4.5 %. The 0.23 % shift is itself a useful null test: it
+confirms the medians are robust to the gate, which is what
+`DRIFTER_ANALYSIS.md` §5 claims.
 
 **It also independently vindicates quoting the jackknife.** Eq. (16) propagates
 *instrument* error only — the authors say so explicitly. Evaluated on our
@@ -840,8 +844,10 @@ not by GPS noise. Two caveats, both conservative: ρ was set to 0, and a positiv
 error correlation would make σ_ζ *smaller* still; and our buoys report Doppler
 velocity block-averaged over 2048 samples, so σ_u is likely at the low end.
 
-**Action:** if the error budget is ever revisited, this is the paper to
-implement — report λ_a alongside the quotient, and gate on it.
+**Done:** λ_a is reported alongside the quotient and gated on. What remains
+from this paper is the *a priori* error itself — Eq. (16) could replace the
+formal least-squares error entirely, since it knows about cluster geometry and
+the least-squares error does not.
 
 ### 24. Rudnick et al. (2015) — the solid-body fit
 

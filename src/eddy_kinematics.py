@@ -333,7 +333,26 @@ def polygon_quality(x, y):
     return 4 * np.pi * A / P ** 2 if P > 0 else 0.0
 
 
-def circulation_kinematics(t, x, y, u, v, min_quality=0.10):
+def cluster_axes(x, y):
+    """Minor and major axis lengths of a drifter cluster, ``(l_a, l_b)``.
+
+    The square roots of the eigenvalues of the position covariance matrix, so
+    both are lengths in metres with ``l_a <= l_b``.  Spydell et al. (2019)
+    write their Eq. (16) in terms of "eigenvalues of the position covariance
+    matrix"; the square root is the reading that makes ``sigma_u**2 / l_a**2``
+    come out as a vorticity variance, and is what is used here.
+
+    Note ``np.cov`` normalises by N-1, so l_a is not directly comparable
+    between the four-drifter polygon and the three-drifter jackknife triangles.
+    Gate each against its own history, not against the other's.
+    """
+    c = np.cov(np.vstack([x, y]))
+    w = np.linalg.eigvalsh(c)              # ascending, always length 2 here
+    return np.sqrt(max(w[0], 0.0)), np.sqrt(max(w[1], 0.0))
+
+
+def circulation_kinematics(t, x, y, u, v, min_quality=0.10,
+                           min_minor_axis=50.0):
     """Vorticity and divergence from contour integrals around the drifters.
 
     Stokes' theorem gives the area-averaged vorticity as the circulation
@@ -346,12 +365,29 @@ def circulation_kinematics(t, x, y, u, v, min_quality=0.10):
     an epoch where one drifter has dropped out still returns a value -- from a
     triangle, over a different area, not from the quadrilateral.  Callers that
     need a homogeneous series must check ``n_vertices``.
+
+    Two shape gates, and they reject different things:
+
+    ``min_quality``
+        Isoperimetric quotient, scale-free.  Rejects degenerate *shapes*.
+    ``min_minor_axis``
+        Cluster narrowness in metres.  Spydell et al. (2019) show that the
+        minor axis, not area or ellipticity, is what sets the vorticity error:
+        their Eq. (16) has sigma_zeta ~ sigma_u / l_a, so a narrow cluster is
+        noisy however well-proportioned the polygon looks.  They find the error
+        exceeds 5f below l_a = 50 m even for velocity errors under
+        0.004 m/s, which is the default here.
+
+    The two correlate strongly on this dataset (r = 0.82) but are not
+    redundant: the quotient alone passes a handful of windows narrow enough to
+    be untrustworthy.  Set either to 0 to disable it.
     """
     n = len(t)
     zeta = np.full(n, np.nan)
     delta = np.full(n, np.nan)
     area = np.full(n, np.nan)
     aspect = np.full(n, np.nan)
+    minor = np.full(n, np.nan)
     qual = np.full(n, np.nan)
     nvert = np.zeros(n, int)
     for i in range(n):
@@ -367,18 +403,19 @@ def circulation_kinematics(t, x, y, u, v, min_quality=0.10):
         un, vn = np.roll(us, -1), np.roll(vs, -1)
         A = 0.5 * np.sum(xs * yn - xn * ys)            # shoelace, signed
         qual[i] = polygon_quality(xs, ys)
-        if abs(A) < 1.0 or qual[i] < min_quality:
+        # Geometry is recorded for every window with enough vertices, including
+        # rejected ones, so that a gate can be diagnosed after the fact.
+        la, lb = cluster_axes(xs, ys)
+        minor[i] = la
+        aspect[i] = lb / max(la, 1e-12)
+        if abs(A) < 1.0 or qual[i] < min_quality or la < min_minor_axis:
             continue                                   # degenerate cluster
         dx, dy = xn - xs, yn - ys
         circ = np.sum(0.5 * (us + un) * dx + 0.5 * (vs + vn) * dy)
         flux = np.sum(0.5 * (us + un) * dy - 0.5 * (vs + vn) * dx)
         zeta[i], delta[i], area[i] = circ / A, flux / A, A
-        # cluster shape: ratio of principal axes of the position covariance
-        c = np.cov(np.vstack([xs, ys]))
-        w = np.linalg.eigvalsh(c)          # always a length-2 vector here
-        aspect[i] = np.sqrt(w.max() / max(w.min(), 1e-12))
-    return dict(zeta=zeta, delta=delta, area=area, aspect=aspect, quality=qual,
-                n_vertices=nvert)
+    return dict(zeta=zeta, delta=delta, area=area, aspect=aspect,
+                minor_axis=minor, quality=qual, n_vertices=nvert)
 
 
 def circulation_jackknife(t, x, y, u, v):

@@ -67,6 +67,7 @@ def run(indir, outdir, t0, t1, blocks=4, window_s=1800.0, step_s=600.0,
                lat0=D["lat0"], lon0=D["lon0"],
                zeta_circ=cc["zeta"], delta_circ=cc["delta"],
                area=cc["area"], aspect=cc["aspect"], quality=cc["quality"],
+               minor_axis=cc["minor_axis"], n_vertices=cc["n_vertices"],
                zeta_jk=jk["zeta_mean"], zeta_jk_spread=jk["zeta_spread"],
                delta_jk_spread=jk["delta_spread"],
                omega_pos=rot["omega"], theta_pos=rot["theta"], turns=rot["turns"],
@@ -274,8 +275,14 @@ def report(r):
         f"  area   median {np.nanmedian(r['area'])/1e6:.3f} km^2   "
         f"({np.nanmin(r['area'])/1e6:.3f} .. {np.nanmax(r['area'])/1e6:.3f})",
         f"  scale  sqrt(area) median {np.sqrt(np.nanmedian(r['area'])):.0f} m",
-        f"  aspect median {np.nanmedian(r['aspect']):.2f}, "
-        f"p95 {np.nanpercentile(r['aspect'],95):.2f}",
+        # geometry of the windows actually used: aspect and minor_axis are
+        # recorded for rejected windows too, so mask on a surviving estimate.
+        f"  aspect median {np.nanmedian(r['aspect'][ok]):.2f}, "
+        f"p95 {np.nanpercentile(r['aspect'][ok],95):.2f}",
+        f"  minor axis median {np.nanmedian(r['minor_axis'][ok]):.0f} m, "
+        f"p5 {np.nanpercentile(r['minor_axis'][ok],5):.0f} m",
+        f"  windows used {int(ok.sum())} of {int((r['n_vertices']>=3).sum())} "
+        f"(rejected {int((r['n_vertices']>=3).sum()-ok.sum())} by the shape gates)",
         f"  eddy radius 2|v|/|zeta| ~ "
         f"{2*np.nanmedian(np.hypot(r['u'],r['v']))/abs(med):.0f} m",
         f"  fit condition number median {np.nanmedian(r['cond']):.2f}, "

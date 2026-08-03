@@ -48,8 +48,8 @@ function — and says where each one breaks. Start at `docs/README.md`.
 
 **The eddy.** Vorticity **−1.19 × 10⁻³ s⁻¹**, Rossby number **−67**,
 anticyclonic, rotation period 2.9 h, coherent for the entire 25.4 h record
-(Okubo–Weiss < 0 in 100 % of windows). Divergence under 2 % of |ζ| by three
-independent estimators. The vortex is **not solid-body** — vorticity falls off
+(Okubo–Weiss < 0 in 100 % of windows). Divergence is 2.3 % of |ζ| by the
+contour estimator and 0.1–0.2 % by the other two. The vortex is **not solid-body** — vorticity falls off
 with radius, core radius ~1.1–1.2 km.
 
 **The array.** Tides resolved to 99 % of variance, M2 = 0.502 ± 0.004 m across
@@ -127,10 +127,10 @@ to the digits printed:
 
 | | Python | MATLAB |
 |---|---|---|
-| ζ median | −1.190 × 10⁻³ s⁻¹ | −1.190 × 10⁻³ s⁻¹ |
-| Rossby | −67.0 | −67.0 |
-| rotation period | 2.93 h | 2.93 h |
-| leave-one-out 1σ | 1.710 × 10⁻⁴ (17 %) | 1.710 × 10⁻⁴ (17 %) |
+| ζ median | −1.187 × 10⁻³ s⁻¹ | −1.187 × 10⁻³ s⁻¹ |
+| Rossby | −66.9 | −66.9 |
+| rotation period | 2.94 h | 2.94 h |
+| leave-one-out 1σ | 1.622 × 10⁻⁴ (16 %) | 1.623 × 10⁻⁴ (16 %) |
 | constellation revolutions | −6.86 | −6.86 |
 | Okubo–Weiss < 0 | 100 % of windows | 100 % of windows |
 | **Lamb–Oseen R** | **1206 m** | **1116 m**, 95 % CI [1005, 1605] |

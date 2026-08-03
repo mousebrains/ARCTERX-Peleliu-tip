@@ -158,14 +158,55 @@ matter:
 
 | $Q_{\min}$ | median $\zeta$ | change | epochs kept |
 |---|---|---|---|
-| 0.00 | −1.1885 × 10⁻³ | +0.14 % | 355 |
-| 0.05 | −1.1893 × 10⁻³ | +0.07 % | 352 |
-| **0.10** | **−1.1901 × 10⁻³** | — | 343 |
-| 0.20 | −1.1843 × 10⁻³ | +0.49 % | 315 |
-| 0.30 | −1.1721 × 10⁻³ | +1.52 % | 252 |
+| 0.00 | −1.1864 × 10⁻³ | +0.09 % | 343 |
+| 0.05 | −1.1864 × 10⁻³ | +0.09 % | 343 |
+| **0.10** | **−1.1874 × 10⁻³** | — | 340 |
+| 0.20 | −1.1843 × 10⁻³ | +0.26 % | 315 |
+| 0.30 | −1.1721 × 10⁻³ | +1.29 % | 252 |
 
-The answer moves by 1.5 % while a third of the data is discarded. The gate is
+The answer moves by 1.3 % while a third of the data is discarded. The gate is
 protecting against outliers, not manufacturing the result.
+
+### The quotient is not the whole story
+
+The isoperimetric quotient is a measure of *shape*, and shape is not what sets
+the vorticity error. Spydell et al. (2019) derive it directly — their Eq. (16),
+
+$$\sigma_\zeta^2 = \frac{1}{N}\,\frac{\sigma_u^2}{l_a^2}
+  \left(1 + \frac{l_a^2}{l_b^2}\right)(1 - \rho_{u_1u_2})$$
+
+with $l_a \le l_b$ the minor and major axes of the cluster (square roots of the
+position-covariance eigenvalues, so both are lengths). The leading dependence is
+$\sigma_\zeta \sim \sigma_u / l_a$: **a narrow cluster is noisy however
+well-proportioned its polygon looks**, and error falls only as $N^{-1/2}$, so
+with $N = 4$ we are near the floor of what more drifters would buy. Their own
+summary is blunt: "previously, cluster area or ellipticity were used as criteria
+to distinguish error. We show that the drifter cluster minor axis (narrowness)
+is a key time-dependent factor."
+
+So there is a second gate, $l_a \ge 50$ m, the value at which they find the
+error exceeds $5f$ even for velocity errors under 0.004 m s⁻¹. On this dataset
+the two gates correlate strongly ($r = 0.82$) — the quotient was doing much of
+this work by proxy — but they are not redundant: 12 epochs fall below 50 m, the
+quotient catches 9, and the 3 that leak carry a median $|\zeta|$ of
+3.2 × 10⁻³ s⁻¹, 2.7× the record median. Exactly the signature Eq. (16)
+predicts.
+
+It is also a free parameter, so it gets the same treatment:
+
+| $l_{a,\min}$ | median $\zeta$ | change | epochs kept |
+|---|---|---|---|
+| 0 m | −1.1901 × 10⁻³ | −0.23 % | 343 |
+| 25 m | −1.1901 × 10⁻³ | −0.23 % | 343 |
+| **50 m** | **−1.1874 × 10⁻³** | — | 340 |
+| 100 m | −1.1852 × 10⁻³ | +0.18 % | 322 |
+| 150 m | −1.1715 × 10⁻³ | +1.34 % | 272 |
+
+1.3 % across the full range, the same insensitivity as the quotient. Turning it
+on moved the published median by **0.23 %** (Rossby −67.0 → −66.9) while
+tightening the 5th percentile of $|\zeta|$ by 4.5 % and the leave-one-out
+spread by 5 %. It buys a cleaner tail, not a different answer — which is the
+only honest reason to add a gate.
 
 ## 1.7 Okubo–Weiss: is it a vortex or a strain field?
 
@@ -210,7 +251,7 @@ gives a cumulative rotation that can be compared with $\int \zeta/2 \, dt$.
 independent of the other two estimators, which share the same $u, v$.
 
 Over the record the constellation turned **−6.86 revolutions** where $\zeta/2$
-integrated predicts **−8.95**. That 23 % shortfall is not an error; it is the
+integrated predicts **−8.83**. That 22 % shortfall is not an error; it is the
 signature of a non-solid-body vortex, and §2.3 shows why.
 
 ### A bug worth knowing about
@@ -236,7 +277,7 @@ They fail differently:
 
 Agreement between the first two tests the affine assumption. Agreement with the
 third tests whether the velocities and positions tell the same story, and the
-*disagreement* (6.86 vs 8.95 turns) is itself the measurement in §2.3.
+*disagreement* (6.86 vs 8.83 turns) is itself the measurement in §2.3.
 
 Divergence gets the same treatment, with a third estimator
 $\delta = d(\ln A)/dt$ from the cluster area alone — again positions only.

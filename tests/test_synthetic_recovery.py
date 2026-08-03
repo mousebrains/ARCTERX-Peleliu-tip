@@ -241,9 +241,10 @@ def test_quadrature_bias(A):
     print(f"  4. quadrature : |zeta| biased {med:+.2f}% "
           f"(IQR {np.percentile(rel,25):+.2f} .. {np.percentile(rel,75):+.2f}, "
           f"n={len(rel)})")
-    print(f"     -> published -1.190e-03 corrects to "
-          f"{-1.190e-3/(1+med/100):+.3e} (Rossby -67.0 -> "
-          f"{-1.190e-3/(1+med/100)/1.7756e-5:+.1f})")
+    zpub = -1.187e-3          # eddy_analysis.py median, both shape gates on
+    print(f"     -> published {zpub:+.3e} corrects to "
+          f"{zpub/(1+med/100):+.3e} (Rossby {zpub/1.7756e-5:+.1f} -> "
+          f"{zpub/(1+med/100)/1.7756e-5:+.1f})")
     assert abs(med) < 10, "bias larger than 10% would invalidate the headline"
     return True
 

@@ -80,7 +80,7 @@ non-solid-body vortex returns −0.56 to −0.74. The observed −0.59 sits squa
 in the second group. **The claim survives.**
 
 The rotation shortfall in §1.8 is the same physics seen another way: the
-constellation turned 6.86 revolutions where the *core* vorticity predicts 8.95,
+constellation turned 6.86 revolutions where the *core* vorticity predicts 8.83,
 because the outer drifters orbit more slowly than the core vorticity implies.
 Two independent diagnostics, one conclusion.
 
@@ -112,7 +112,7 @@ $$P_{\text{obs}} = \frac{25.4\ \mathrm{h}}{6.86\ \mathrm{rev}} = 3.70\ \mathrm{h
 \zeta = \frac{4\pi}{P_{\text{obs}}} = 9.4\times10^{-4}\ \mathrm{s^{-1}}$$
 
 against $1.19\times10^{-3}\ \mathrm{s^{-1}}$ from four-drifter circulation —
-**21 % low**, matching the 23 % shortfall in §1.8. Neither number is wrong;
+**21 % low**, matching the 22 % shortfall in §1.8. Neither number is wrong;
 they average over different radii, because the orbital loop is larger than the
 instantaneous cluster polygon. Both sit on the profile above: $1.19\times10^{-3}$
 near the ~640 m median cluster scale, $9.4\times10^{-4}$ out past ~1 km.

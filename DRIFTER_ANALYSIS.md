@@ -118,8 +118,8 @@ range of averaging length (64 s → 1024 s).
 | **vorticity ζ** | **−1.19 × 10⁻³ s⁻¹** (median, circulation/Stokes) |
 | **Rossby number** | **−67** (f = 1.78 × 10⁻⁵ s⁻¹ at 6.99 °N) |
 | rotation period | 2.9 h |
-| uncertainty | **±17 %** (leave-one-out), *not* the 5 % formal error |
-| divergence | < 2 % of \|ζ\| by three independent estimators |
+| uncertainty | **±16 %** (leave-one-out), *not* the 5 % formal error |
+| divergence | 2.3 % of \|ζ\| (contour); 0.1 % (d(ln A)/dt), 0.2 % (LSQ) |
 | Okubo–Weiss | **< 0 in 100 % of windows** — coherent for the whole 25.4 h |
 | \|strain\|/\|ζ\| | 0.36 |
 | cluster | 0.41 km² median (~640 m), vortex core ~1.2 km |
@@ -130,7 +130,7 @@ Lamb–Oseen fit gives core radius **R ≈ 1.1–1.2 km** (quote the bootstrap
 interval, not a point estimate — §5) and Γ ≈ −5400 m² s⁻¹.
 
 That also resolves an apparent discrepancy: the constellation turned **−6.86**
-revolutions where ζ/2 integrated predicts −8.95. The 23 % shortfall *is* the
+revolutions where ζ/2 integrated predicts −8.83. The 22 % shortfall *is* the
 non-solid-body profile — outer drifters orbit more slowly than the core
 vorticity implies.
 
@@ -153,7 +153,7 @@ positive v_r.
 ## 5. Traps
 
 **Quote the resampling error, not the formal one.** The leave-one-out spread
-(17 % of \|ζ\|) is three times the least-squares formal error (5 %), because
+(16 % of \|ζ\|) is three times the least-squares formal error (5 %), because
 the formal error cannot know the flow is curved across the cluster. Molinari &
 Kirwan hit the same thing in 1975 — their series were "ragged with frequent
 changes in sign" wherever shear was small relative to observational error.
@@ -203,31 +203,47 @@ permissive, against a recommendation the authors describe as already less
 stringent than common practice. We also apply one absolute threshold to both
 the four-drifter polygon (quotient max 0.785) and the leave-one-out triangles
 (max 0.605), so it is relatively looser where there are fewer constraints.
-Not changed, because it moves published numbers.
+Left as it is: it is uncalibrated but demonstrably not load-bearing (§1.6 of
+`docs/`).
 
-**And we may be gating on the wrong variable entirely.** Spydell et al. (2019)
-state it directly: "cluster area or ellipticity were used as criteria to
-distinguish error. We show that the drifter cluster **minor axis** (narrowness)
-is a key time-dependent factor." Our quotient is an area/ellipticity measure.
-Checking our own cluster against their criterion:
+**The quotient was also the wrong variable, and that one is now fixed.**
+Spydell et al. (2019) state it directly: "cluster area or ellipticity were used
+as criteria to distinguish error. We show that the drifter cluster **minor
+axis** (narrowness) is a key time-dependent factor." Their Eq. (16) gives
+σ_ζ ~ σ_u/λ_a, so a narrow cluster is noisy however well-proportioned its
+polygon looks. Our quotient is an area/ellipticity measure. Checking our own
+cluster against their criterion:
 
 | | |
 |---|---|
-| minor axis λ_a, median | 236 m (p5 = 64 m, min 12 m) |
-| windows below their 50 m danger threshold | 12 of 355 |
-| caught by the existing gate | 9 |
+| minor axis λ_a, median | 241 m (p5 = 98 m after gating; min 12 m before) |
+| epochs below their 50 m danger threshold | 12 of 355 |
+| caught by the quotient gate alone | 9 |
 | **leaked through** | **3**, carrying median \|ζ\| = 3.2 × 10⁻³ (2.7× the record median) |
-| correlation, our quality vs λ_a | r = 0.82 |
+| correlation, quotient vs λ_a | r = 0.82 |
 
-The quotient tracks narrowness well (r = 0.82) so it mostly works by proxy, but
-it is not the right variable. Adding `λ_a ≥ 50 m` moves the median by **0.23 %**
-(Ro −67.0 → −66.9) and tightens p95 |ζ| by 4.5 % — a free improvement to the
-tail, and a further confirmation that the medians are robust.
+**A second gate, `λ_a ≥ 50 m`, is now applied** — their threshold, the point at
+which the error exceeds 5f even for velocity errors under 0.004 m s⁻¹. The two
+gates correlate at r = 0.82, so the quotient was doing much of this by proxy,
+but not all of it. Effect on the published numbers:
 
-**Instrument error is not what the 17 % is measuring.** Spydell's Eq. (16)
+| | before | after |
+|---|---|---|
+| epochs used | 343 | 340 |
+| median ζ | −1.1901 × 10⁻³ | **−1.1874 × 10⁻³** (+0.23 %) |
+| Rossby | −67.0 | **−66.9** |
+| leave-one-out 1σ | 1.710 × 10⁻⁴ (17 %) | **1.622 × 10⁻⁴ (16 %)** |
+| 5th percentile \|ζ\| | 2.421 × 10⁻³ | **2.312 × 10⁻³** (−4.5 %) |
+
+A cleaner tail, not a different answer — which is the only honest reason to add
+a gate. Sensitivity across λ_a,min ∈ [0, 150] m is 1.3 %, the same insensitivity
+the quotient shows; both sweeps are in `docs/01-velocity-gradient-kinematics.md`
+§1.6. The MATLAB port carries the same gate and reproduces the new medians.
+
+**Instrument error is not what the 16 % is measuring.** Spydell's Eq. (16)
 propagates instrument error alone. On our geometry it gives σ_ζ of 0.4–1.9 % of
 |ζ| across plausible velocity errors (0.002–0.010 m s⁻¹), against our 5 % formal
-and 17 % jackknife. GPS noise is roughly a tenth of the jackknife, so the
+and 16 % jackknife. GPS noise is roughly a tenth of the jackknife, so the
 leave-one-out spread really is dominated by flow curvature and unresolved
 scales — exactly what it was claimed to measure. Both caveats run the same way:
 the calculation set the error correlation to zero, and our Doppler velocities

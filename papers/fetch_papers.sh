@@ -32,18 +32,22 @@ ENTRIES=(
 "Johnston2019_Oceanography_FLEAT_program_overview.pdf|https://tos.org/oceanography/assets/docs/32-4_johnston1.pdf|Johnston et al. 2019, Oceanography 32(4), 10-21 -- FLEAT overview"
 # NOAA Institutional Repository copy.
 "Essink2022_JTECH_drifter_cluster_kinematics.pdf|https://repository.library.noaa.gov/view/noaa/65038/noaa_65038_DS1.pdf|Essink et al. 2022, J Atmos Ocean Tech 39(8), 1183-1198"
+# Copernicus open access (CC BY).
+"LillyGascard2006_NPG_wavelet_ridge_elliptical.pdf|https://npg.copernicus.org/articles/13/467/2006/npg-13-467-2006.pdf|Lilly & Gascard 2006, Nonlin Processes Geophys 13, 467-483"
+"LillyPerezBrunius2021_NPG_wavelet_ridge_eddy_detection.pdf|https://npg.copernicus.org/articles/28/181/2021/npg-28-181-2021.pdf|Lilly & Perez-Brunius 2021, Nonlin Processes Geophys 28, 181-212"
 # Author-posted copy (Univ. of Hawai'i).
 "KloosterzielVanHeijst1991_JFM_unstable_barotropic_vortices.pdf|http://www.soest.hawaii.edu/oceanography/faculty/kloosterziel/pdfs/unstable.pdf|Kloosterziel & van Heijst 1991, J Fluid Mech 223, 1-24"
 )
 
-# Wanted but publisher-blocked (HTTP 403 to curl); open these in a browser on a
-# machine with institutional access.  See "Wanted" in README.md.
-#   Zeiden et al. 2022,  J Phys Oceanogr 52(9) 2237-2255   10.1175/JPO-D-21-0252.1
-#   Huntley et al. 2022, J Atmos Ocean Tech 39(10) 1499-1523  10.1175/JTECH-D-21-0161.1
-#   Ohlmann et al. 2017, Geophys Res Lett 44(1) 330-337    10.1002/2016GL071537
-#   MacKinnon et al. 2019, J Geophys Res Oceans 124(7) 4891-4903  10.1029/2019JC014945
-#   Zeiden et al. 2019,  J Phys Oceanogr 49(9) 2217-2235   10.1175/JPO-D-18-0233.1
-#   Siegelman et al. 2023, J Phys Oceanogr 53(2) 433-455   10.1175/JPO-D-21-0310.1
+# Entries 15-20 are held locally but are publisher copyright and are NOT
+# fetched here -- they were retrieved manually under institutional access.
+#
+# Wanted next (see "Wanted" in README.md); these would change code, not prose:
+#   Spydell et al. 2019, J Atmos Ocean Tech 36(11) 2101-2119  10.1175/JTECH-D-19-0108.1
+#   Rudnick et al. 2015, J Phys Oceanogr 45(1) 313-326        10.1175/JPO-D-14-0138.1
+#   Wolanski et al. 1984, J Geophys Res 89(C6) 10553-10569    10.1029/JC089iC06p10553
+#   Shcherbina et al. 2013, Geophys Res Lett 40 4706-4711     10.1002/grl.50919
+#   Dong et al. 2007, J Phys Oceanogr 37(4) 962-981           10.1175/JPO3047.1
 
 missing=0
 for entry in "${ENTRIES[@]}"; do

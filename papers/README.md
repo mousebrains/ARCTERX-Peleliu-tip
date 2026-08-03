@@ -25,25 +25,41 @@ implements it**.
 | 12 | Johnston et al. 2019 (FLEAT) | ✓ `Johnston2019_Oceanography_FLEAT_program_overview.pdf` | title page |
 | 13 | Essink et al. 2022 | ✓ `Essink2022_JTECH_drifter_cluster_kinematics.pdf` | title page |
 | 14 | Kloosterziel & van Heijst 1991 | ✓ `KloosterzielVanHeijst1991_JFM_unstable_barotropic_vortices.pdf` | title page |
+| 15 | Zeiden et al. 2022 ★★ | ✓ `Zeiden2022_JPO_palau_wake_vorticity_drifters.pdf` | title page |
+| 16 | Huntley et al. 2022 ★ | ✓ `Huntley2022_JTECH_drifter_triplet_divergence.pdf` | title page |
+| 17 | MacKinnon et al. 2019 ★ | ✓ `MacKinnon2019_JGR_palau_eddy_wake_broadband.pdf` | title page |
+| 18 | Ohlmann et al. 2017 | ✓ `Ohlmann2017_GRL_submesoscale_drifter_kinematics.pdf` | title page |
+| 19 | Zeiden et al. 2019 | ✓ `Zeiden2019_JPO_glider_island_wake_palau.pdf` | title page |
+| 20 | Siegelman et al. 2023 | ✓ `Siegelman2023_JPO_near_inertial_around_islands.pdf` | title page |
+| 21 | Lilly & Gascard 2006 | ✓ `LillyGascard2006_NPG_wavelet_ridge_elliptical.pdf` | title page |
+| 22 | Lilly & Pérez-Brunius 2021 | ✓ `LillyPerezBrunius2021_NPG_wavelet_ridge_eddy_detection.pdf` | title page |
 
 Every volume/issue/page figure below was read off the article's own title page
 — not from a publisher web record. Saffman (1992) is a book and is still
 outstanding; its details remain unverified until the copy arrives.
 
-Entries **1–5** are implemented. Entry **7** is consulted but deliberately
-**not** implemented — see the entry for the arithmetic behind that decision.
-Entries **8–12** are the site and phenomenon literature: Palau, and in one case
-the Peleliu tip itself. Entries **13–14** are method and dynamics support.
+How to read the numbering:
 
-**Entries 8–12 are open access** (*Oceanography*, The Oceanography Society) and
-entry 14 is a copy posted by its author, so unlike 1–5 these were downloadable
-directly. See "A note on redistribution" for what that does and does not
-change.
+| Entries | What they are |
+|---|---|
+| **1–5** | **Implemented** — the methods the code actually runs |
+| 6 | Lamb–Oseen reference, still outstanding |
+| 7 | Consulted, method **declined**; see the entry for the arithmetic |
+| **8–12, 17, 19** | **Site and phenomenon** — Palau, and in entry 8's case the Peleliu tip itself |
+| **13, 15, 16, 18** | **Method** — drifter-cluster estimator accuracy |
+| 14, 20 | Dynamics support: vortex stability, near-inertial theory |
+| 21–22 | The wavelet-ridge primary sources behind the entry 7 decision |
 
-Several important papers are **still missing behind paywalls** — see
-[Wanted](#wanted--behind-a-paywall) at the end. One of them, Zeiden et al.
-(2022), is close enough to this analysis that it should be read before any
-write-up.
+The three marked ★ are the ones to read first if you read nothing else:
+**15** (Zeiden et al. 2022 ★★) is the closest published analysis to this one and
+ran the same estimator comparison; **16** (Huntley et al. 2022) calibrates the
+cluster-shape gate we set by hand; **17** (MacKinnon et al. 2019) supplies a
+mechanism for the circulation shortfall in `DRIFTER_ANALYSIS.md` §7.
+
+**Everything previously listed as missing has now been obtained.** The next
+round of targets is in [Wanted](#wanted--next-round) at the end — headed by
+Spydell et al. (2019) and Rudnick et al. (2015), both of which would change
+code rather than prose.
 
 `./fetch_papers.sh --list` reports what is missing at any time.
 
@@ -478,6 +494,262 @@ project has tested our vortex against a shear-instability criterion, and its
 
 **Implements:** nothing; supports the §2.6 stability argument.
 
+### 15. Zeiden et al. (2022) — Palau wake vorticity from drifter clusters ★★
+
+> Zeiden, K. L., D. L. Rudnick, J. A. MacKinnon, V. Hormann, and L. Centurioni,
+> 2022: Vorticity in the wake of Palau from Lagrangian surface drifters.
+> *Journal of Physical Oceanography* **52**(9), 2237–2255.
+> doi:[10.1175/JPO-D-21-0252.1](https://doi.org/10.1175/JPO-D-21-0252.1)
+> — received 20 Nov 2021, final form 9 May 2022.
+
+**The closest published analysis to this one.** Same island, SVP drifter
+clusters, relative vorticity, Okubo–Weiss, and the same two founding references
+(Okubo & Ebbesmeyer 1976; Molinari & Kirwan 1975 — our entries 1 and 2). 19
+clusters of five drifters, ~5 km scale, released over 2 years; 15 entrained in
+the wake.
+
+**It answers the estimator question of entry 7 empirically.** They ran the same
+comparison and found a **factor of 2** between methods: for cluster C7 the
+wavelet estimate from a *single* drifter's velocity time series gives Ro ~ 6,
+while the least-squares fit over *all* drifters gives Ro ~ 3.
+
+That is the same effect documented in `docs/02-vortex-structure.md` §2.3, and
+the signs are consistent once you ask which estimator averages over the larger
+area:
+
+| | larger-area estimator | reads |
+|---|---|---|
+| Zeiden C7 | 5 km cluster ≫ eddy core → LS fit | **low** (Ro 3 vs 6) |
+| here | orbital loop > 0.64 km cluster → constellation rotation | **low** (9.4 vs 11.9 × 10⁻⁴) |
+
+Different geometry, same rule: **whichever estimator integrates over more area
+reads lower, because |ζ| falls with radius.** Our 21 % and their factor of 2 are
+one phenomenon. This is the strongest external support the area-average
+argument has.
+
+**Three methods here are better than ours and should be considered:**
+
+1. **A solid-body-constrained least-squares fit** (their Eq. 2, after Rudnick
+   et al. 2015) alongside the plane fit. It solves for `[u0, v0, ζ/2]` in one
+   system, and returns **the eddy center as a fit parameter**. Ours instead
+   inverts `A⁻¹(c − U₀)`, which `docs/02` §2.4 calls the weakest link and which
+   needs two gates. Theirs is the more robust construction.
+2. **The solid-body fit is immune to cluster shape.** They give the error as
+   σ_ζ² ≈ (σ_U²/N)(1/σ_L²) — **no aspect-ratio term**, "because in this case the
+   velocity gradient does not depend on direction", against
+   σ_ζ² ≈ (σ_U²/N)(1 + 1/a²)(1/b²) for the plane fit (Spydell et al. 2019;
+   confirmed by Essink et al. 2022, our entry 13). That directly addresses the
+   near-collinear blow-up that our isoperimetric gate exists to suppress: they
+   use an estimator that does not care, where we discard data.
+3. **The solid-body constraint acts as a tide/inertial filter.** For C7 after
+   15 days the semidiurnal band held 48 % of the plane-fit vorticity variance
+   but only 18 % of the solid-body-fit variance.
+
+**Corroborations of things we found independently:**
+
+- **Outward spiral.** They observe "drifters are moving outwards from within
+  their eddy cores", with U_r ~ 0.03–0.05 m s⁻¹, "an order of magnitude weaker
+  than the azimuthal velocity". We report radial velocity at 4 % of azimuthal
+  and three of four drifters roughly doubling their orbital radius. Same sign,
+  same order.
+- **Not solid-body.** They fit both a Rankine vortex and a "line vortex ...
+  initially irrotational point vortex allowed to decay in time due to friction"
+  — that second one is Lamb–Oseen, our `fit_oseen()` — and conclude the Rankine
+  form "overpredicts the velocity and vorticity in the vicinity of the eddy
+  radius", with "vorticity decreas[ing] with increasing radial distance even
+  within the core".
+- **Okubo–Weiss as the coherence gate**, defined identically and used for the
+  same purpose.
+
+**Two differences that matter, and are not contradictions:**
+
+- **Their wake eddies are cyclonic; ours is anticyclonic.** Theirs were released
+  at the **north** end of the archipelago, where westward flow generates
+  positive shear; we are at the **south** tip of Peleliu. Johnston et al.
+  (entry 8) explicitly expect "a sequence of cyclonic/anticyclonic eddies ...
+  formed at the north/south" points. Consistent, not conflicting — but it means
+  **their rotary trick does not transfer to us.** They separate wake vorticity
+  from internal waves by sense of rotation, since NH internal waves are
+  anticyclonic; our vortex is anticyclonic too, so it sits in the same rotary
+  half-plane as the wave field. We separate by frequency instead, which is easy
+  here (2.9–3.7 h against a 98.3 h inertial period).
+- **Scale.** Their eddies are ~40 km diameter with Ro ≳ 1 decaying as t⁻¹; ours
+  is ~2.4 km with Ro = −67. The bridge is Johnston et al. at our own headland
+  (1–2 km, Ro 65–80), not this paper.
+
+**One quantitative comparison to make, carefully.** They report an enstrophy
+spectrum ζ² ∝ k^1.9 ≈ k², i.e. |ζ| ∝ 1/L. Our profile gives |ζ| ∝ L^−0.48
+(1.58 × 10⁻³ at ~350 m to 0.98 × 10⁻³ at ~950 m), i.e. ζ² ∝ k^0.96. These are
+**not commensurable as they stand** — theirs is an ensemble over many clusters,
+times and eddies across 5–50 km in a turbulent wake; ours is one vortex sampled
+at different cluster scales inside a single core. Do not report this as a
+discrepancy without matching the footprints first.
+
+### 16. Huntley et al. (2022) — shape thresholds for cluster estimates ★
+
+> Huntley, H. S., M. Berta, G. Esposito, A. Griffa, B. Mourre, and
+> L. Centurioni, 2022: Conditions for reliable divergence estimates from drifter
+> triplets. *Journal of Atmospheric and Oceanic Technology* **39**(10),
+> 1499–1523.
+> doi:[10.1175/JTECH-D-21-0161.1](https://doi.org/10.1175/JTECH-D-21-0161.1)
+
+Derives, against a high-resolution ROMS simulation where truth is known, the
+threshold at which a drifter triangle is too degenerate to trust. Two metrics
+are found "equally effective", especially **at scales of 5 km and below** —
+which is our regime:
+
+```
+scaled aspect ratio  Lambda = 0.20     (Lambda = 1 equilateral, 0 collinear)
+largest interior angle  theta = 0.86 pi
+```
+
+**This is directly actionable and our gate is looser than theirs.** We gate on
+the isoperimetric quotient 4πA/P² with `min_quality=0.10`
+(`src/eddy_kinematics.py:336`). Normalising both to the equilateral triangle,
+where 4πA/P² = π√3/9 = 0.6046:
+
+| | our gate | Huntley |
+|---|---|---|
+| as Λ (equilateral = 1) | **0.165** | **0.20** |
+| as 4πA/P² | 0.10 | 0.121 |
+
+So our hand-set threshold is ~20 % more permissive than the model-calibrated
+recommendation — and they note their own criteria are already "less stringent
+than some of the ad hoc criteria previously used".
+
+A second issue this exposes: we apply **one absolute threshold to both the
+four-drifter polygon and the leave-one-out triangles**, but the quotient
+maxes at 0.6046 for a triangle and 0.7854 for a square. The same 0.10 is
+therefore 16.5 % of maximum for triangles and 12.7 % for quadrilaterals — the
+gate is relatively *more* permissive exactly where we have fewer constraints.
+
+**Action, not taken:** raising `min_quality` changes published numbers, so it
+is left alone pending a decision. The §5 spike to ζ = 0.27 s⁻¹ that motivated
+the gate suggests the current value works in practice; the point is that it is
+uncalibrated, and now need not be.
+
+They also warn that shape-based discarding "necessarily biases the distribution
+of divergence estimates slightly toward positive values" — relevant to our
+"divergence < 2 % of |ζ|" claim, though small and opposite to the Lagrangian
+convergence-sampling bias.
+
+### 17. MacKinnon et al. (2019) — tidal boost to wake vorticity flux ★
+
+> MacKinnon, J. A., M. H. Alford, G. Voet, K. L. Zeiden, T. M. S. Johnston,
+> M. Siegelman, S. Merrifield, and M. Merrifield, 2019: Eddy wake generation
+> from broadband currents near Palau. *Journal of Geophysical Research: Oceans*
+> **124**(7), 4891–4903.
+> doi:[10.1029/2019JC014945](https://doi.org/10.1029/2019JC014945)
+
+Measurements at the flow-separation point at the **north** end of Palau, where
+"energetic tides and vertically sheared low-frequency flows are both present" —
+the same broadband forcing regime as Peleliu. Small-scale (~1 km) wake eddies of
+both vorticity signs on either side of the separation point, evolving over
+several tidal periods.
+
+**Its central result speaks straight to our circulation budget.** Most wake
+work treats either steady flow or purely tidal flow; this paper treats both
+together, and finds that including high-frequency oscillatory currents "may
+boost the net flux of vorticity into the ocean interior by a depth dependent
+factor of **2 to 25**", concluding that models omitting them "may not
+accurately infer the net momentum or energy losses".
+
+`DRIFTER_ANALYSIS.md` §7 records that Γ needs **2–3×** more forcing than one M2
+half-cycle at the array-averaged 0.64 m s⁻¹ supplies. A tidal-rectification
+boost of 2–25× is a *mechanism* for exactly that shortfall, and it is the
+second of the two horns in §7 ("circulation accumulates over several cycles")
+rather than the first. Together with entry 8's local flow intensification,
+**both horns now have supporting evidence and they are not exclusive.** Neither
+is confirmed for our event.
+
+### 18. Ohlmann et al. (2017) — submesoscale kinematics from drifter clusters
+
+> Ohlmann, J. C., M. J. Molemaker, B. Baschek, B. Holt, G. Marmorino, and
+> G. Smith, 2017: Drifter observations of submesoscale flow kinematics in the
+> coastal ocean. *Geophysical Research Letters* **44**(1), 330–337.
+> doi:[10.1002/2016GL071537](https://doi.org/10.1002/2016GL071537)
+
+Nine drifters in a 3 × 3 grid at 1 km spacing, deployed onto features spotted
+from the air, with kinematics computed from "all possible four-drifter
+clusters" — the same leave-one-out-style construction we use. Reports mean
+divergence and vorticity that "can exceed 5f", noted as the largest observed in
+the field at the time, and an explicit departure from geostrophy.
+
+Two things to take:
+
+- **Precedent for our regime.** It establishes that O(1 km) drifter clusters
+  measuring |Ro| ≫ 1 is a real, published result, not an artifact — useful when
+  defending Ro = −67, though our value is an order of magnitude beyond theirs.
+- **Their aspect-ratio definition**, α = L_minor/L_major over the cluster, is
+  a third shape metric alongside ours and Huntley's. If the gate is ever
+  recalibrated, pick one of the three and state which.
+
+### 19. Zeiden et al. (2019) — the mesoscale wake at Palau, from gliders
+
+> Zeiden, K. L., D. L. Rudnick, and J. A. MacKinnon, 2019: Glider observations
+> of a mesoscale oceanic island wake. *Journal of Physical Oceanography*
+> **49**(9), 2217–2235.
+> doi:[10.1175/JPO-D-18-0233.1](https://doi.org/10.1175/JPO-D-18-0233.1)
+> — received 6 Nov 2018, final form 31 May 2019.
+
+Two years of glider velocity profiles to 1000 m, east and west of Palau. The
+incident NEC accelerates around the island from 0.1 to 0.2 m s⁻¹ at the
+surface; the lee shows elevated variability and return flow indicating boundary
+layer separation. Mean wake vorticity reaches **0.3f** near the surface, with
+instantaneous values exceeding f during sustained strong westward flow, so
+"ageostrophic effects become important to first order".
+
+This is the **background flow** our vortex was shed into — the island-scale
+context, an order of magnitude larger and weaker than the tip vortex. Also
+reports that eastward flow produces an asymmetric wake, which is the
+independent-variable side of the shedding-direction question in
+`DRIFTER_ANALYSIS.md` §7 and `PRESSURE_ANALYSIS.md` §4.
+
+### 20. Siegelman et al. (2023) — near-inertial currents around islands
+
+> Siegelman, M. N., E. Firing, M. A. Merrifield, J. M. Becker, and
+> R. C. Musgrave, 2023: Near-inertial surface currents around islands.
+> *Journal of Physical Oceanography* **53**(2), 433–455.
+> doi:[10.1175/JPO-D-21-0310.1](https://doi.org/10.1175/JPO-D-21-0310.1)
+> — received 17 Dec 2021, final form 2 Sep 2022.
+
+Theory for how an island modifies wind-generated NIOs, motivated by the Palau
+observations in entry 11. Small islands enhance near-inertial currents via
+island-trapped waves; large islands suppress them through interference between
+incident and reflected Poincaré waves.
+
+**Held as the check on a negative claim.** Entry 7 and `docs/02` §2.6 assert
+that near-inertial analysis is inapplicable to this dataset. That rests on
+record length (98.3 h inertial period against 25.4 h) and on Ro = −67 breaking
+the linearised f_e — **not** on any claim that NIOs are absent at Palau. This
+paper shows they are present and island-modified. The two statements are
+compatible; keep them distinct, and cite this before saying anything about
+near-inertial energy here.
+
+### 21–22. Lilly & Gascard (2006); Lilly & Pérez-Brunius (2021) — wavelet ridges
+
+> Lilly, J. M., and J.-C. Gascard, 2006: Wavelet ridge diagnosis of
+> time-varying elliptical signals with application to an oceanic eddy.
+> *Nonlinear Processes in Geophysics* **13**, 467–483.
+> doi:[10.5194/npg-13-467-2006](https://doi.org/10.5194/npg-13-467-2006)
+>
+> Lilly, J. M., and P. Pérez-Brunius, 2021: Extracting statistically significant
+> eddy signals from large Lagrangian datasets using wavelet ridge analysis, with
+> application to the Gulf of Mexico. *Nonlinear Processes in Geophysics*
+> **28**, 181–212.
+> doi:[10.5194/npg-28-181-2021](https://doi.org/10.5194/npg-28-181-2021)
+> — both open access (CC BY).
+
+The method behind entry 7, and behind the wavelet half of entry 15, held here
+so the decision not to adopt it rests on primary sources rather than on someone
+else's description of them. The 2021 paper is the more useful: it is about
+extracting *statistically significant* eddy signals from large Lagrangian
+datasets, and its significance testing is the part worth reading if the
+single-drifter approach is ever revisited.
+
+Neither changes the conclusion in entry 7. The binding constraint here is 6.9
+orbital cycles of record, not the quality of the method.
+
 ---
 
 ## Non-journal sources
@@ -522,6 +794,14 @@ Siegelman2019_Oceanography_palau_near_inertial_surface.pdf      Oceanography 32(
 Johnston2019_Oceanography_FLEAT_program_overview.pdf            Oceanography 32(4), 10-21
 Essink2022_JTECH_drifter_cluster_kinematics.pdf                 J Atmos Ocean Tech 39(8), 1183-1198
 KloosterzielVanHeijst1991_JFM_unstable_barotropic_vortices.pdf  J Fluid Mech 223, 1-24
+Zeiden2022_JPO_palau_wake_vorticity_drifters.pdf                J Phys Oceanogr 52(9), 2237-2255
+Huntley2022_JTECH_drifter_triplet_divergence.pdf                J Atmos Ocean Tech 39(10), 1499-1523
+MacKinnon2019_JGR_palau_eddy_wake_broadband.pdf                 J Geophys Res Oceans 124(7), 4891-4903
+Ohlmann2017_GRL_submesoscale_drifter_kinematics.pdf             Geophys Res Lett 44(1), 330-337
+Zeiden2019_JPO_glider_island_wake_palau.pdf                     J Phys Oceanogr 49(9), 2217-2235
+Siegelman2023_JPO_near_inertial_around_islands.pdf              J Phys Oceanogr 53(2), 433-455
+LillyGascard2006_NPG_wavelet_ridge_elliptical.pdf               Nonlin Processes Geophys 13, 467-483
+LillyPerezBrunius2021_NPG_wavelet_ridge_eddy_detection.pdf      Nonlin Processes Geophys 28, 181-212
 ```
 
 Naming convention: `Author####_Journal_short-title.pdf`.
@@ -542,58 +822,46 @@ Naming convention: `Author####_Journal_short-title.pdf`.
   printed page footers, after an initial guess of 92–101 / `.415` proved wrong
   — the correct values are **74–83** / `.413`.
 - Entry **13** (Essink) is the NOAA Institutional Repository copy.
+- Entries **15–20** were retrieved by the maintainer under institutional access
+  after the publisher sites refused automated requests. Volume, issue, pages and
+  the received/accepted dates were read off each article's own title page. The
+  files arrived under publisher or ad hoc names and were renamed to the
+  convention here; two carried no useful embedded title, so each was identified
+  from its title page rather than its filename.
+- Entries **21–22** are the Copernicus open-access PDFs.
 - Entry **14** (Kloosterziel & van Heijst): volume and pages read off the title
   page. The author-posted copy carries no DOI, so the DOI alone was confirmed
   against Crossref rather than the article.
-- The **Wanted** table is Crossref metadata only and is **unverified** — no
-  title page has been seen for any of it.
+- The **Wanted** table is Crossref metadata and citing-paper reference lists,
+  and is **unverified** — no title page has been seen for any of it.
 - The Weiss PDF is a copy posted publicly by a UCSD course; cite the Physica D
   version of record.
 - No paywall was circumvented in assembling this directory. The publisher sites
   for the Wanted entries returned HTTP 403 to an ordinary `curl` and were left
   alone; no user agent was spoofed and no proxy was used.
 
-## Wanted — behind a paywall
+## Wanted — next round
 
-Identified as relevant and **not obtained**. All five publisher sites returned
-HTTP 403 to an ordinary `curl`, which — as `fetch_papers.sh` says — usually
-means the request was blocked as automated, not that access is lacking. Opening
-these in a browser on a machine with institutional access should work. Metadata
-below is from **Crossref, not from a title page**, so treat volume/issue/pages
-as unverified until the PDF is in hand.
+The six previously listed here **have all been obtained** (entries 15–20).
+These are the next targets, drawn from the reference lists of what arrived.
+Metadata is Crossref or the citing paper's reference list — **not** a title
+page — so treat it as unverified until the PDF is in hand.
 
-| Priority | Citation | DOI |
-|---|---|---|
-| **1** | Zeiden, K. L., D. L. Rudnick, J. A. MacKinnon, V. Hormann, and L. Centurioni, 2022: Vorticity in the wake of Palau from Lagrangian surface drifters. *J. Phys. Oceanogr.* **52**(9), 2237–2255. | [10.1175/JPO-D-21-0252.1](https://doi.org/10.1175/JPO-D-21-0252.1) |
-| **2** | Huntley, H. S., M. Berta, G. Esposito, A. Griffa, B. Mourre, and L. Centurioni, 2022: Conditions for reliable divergence estimates from drifter triplets. *J. Atmos. Oceanic Technol.* **39**(10), 1499–1523. | [10.1175/JTECH-D-21-0161.1](https://doi.org/10.1175/JTECH-D-21-0161.1) |
-| 3 | Ohlmann, J. C., M. J. Molemaker, B. Baschek, B. Holt, G. Marmorino, and G. Smith, 2017: Drifter observations of submesoscale flow kinematics in the coastal ocean. *Geophys. Res. Lett.* **44**(1), 330–337. | [10.1002/2016GL071537](https://doi.org/10.1002/2016GL071537) |
-| 4 | MacKinnon, J. A., M. H. Alford, G. Voet, K. L. Zeiden, T. M. S. Johnston, M. Siegelman, S. Merrifield, and others, 2019: Eddy wake generation from broadband currents near Palau. *J. Geophys. Res. Oceans* **124**(7), 4891–4903. | [10.1029/2019JC014945](https://doi.org/10.1029/2019JC014945) |
-| 5 | Zeiden, K. L., D. L. Rudnick, and J. A. MacKinnon, 2019: Glider observations of a mesoscale oceanic island wake. *J. Phys. Oceanogr.* **49**(9), 2217–2235. | [10.1175/JPO-D-18-0233.1](https://doi.org/10.1175/JPO-D-18-0233.1) |
-| 6 | Siegelman, M. N., E. Firing, M. A. Merrifield, J. M. Becker, and R. C. Musgrave, 2023: Near-inertial surface currents around islands. *J. Phys. Oceanogr.* **53**(2), 433–455. | [10.1175/JPO-D-21-0310.1](https://doi.org/10.1175/JPO-D-21-0310.1) |
+| Priority | Citation | DOI | Why |
+|---|---|---|---|
+| **1** | Spydell, M., F. Feddersen, and J. MacMahan, 2019: The effect of drifter GPS errors on estimates of submesoscale vorticity. *J. Atmos. Oceanic Technol.* **36**(11), 2101–2119. | [10.1175/JTECH-D-19-0108.1](https://doi.org/10.1175/JTECH-D-19-0108.1) | Source of the σ_ζ² ∝ (1+1/a²)/b² geometry-dependent vorticity error used by entry 15. Our error budget is the weakest part of the analysis; this is the paper that formalises it. |
+| **2** | Rudnick, D. L., G. Gopalakrishnan, and B. D. Cornuelle, 2015: Cyclonic eddies in the Gulf of Mexico: observations by underwater gliders and simulations by data assimilation. *J. Phys. Oceanogr.* **45**(1), 313–326. | [10.1175/JPO-D-14-0138.1](https://doi.org/10.1175/JPO-D-14-0138.1) | Source of the solid-body-constrained fit that entry 15 uses, which returns the eddy centre as a fit parameter and is immune to cluster aspect ratio. The single most promising method improvement identified so far. |
+| 3 | Wolanski, E., J. Imberger, and M. L. Heron, 1984: Island wakes in shallow coastal waters. *J. Geophys. Res.* **89**(C6), 10553–10569. | [10.1029/JC089iC06p10553](https://doi.org/10.1029/JC089iC06p10553) | Origin of the island wake parameter Ref = H/(Cd L) quoted in entry 8 and now proposed for `DRIFTER_ANALYSIS.md` §7. Currently cited at second hand. |
+| 4 | Shcherbina, A. Y., E. A. D'Asaro, C. M. Lee, J. M. Klymak, M. J. Molemaker, and J. C. McWilliams, 2013: Statistics of vertical vorticity, divergence and strain in a developed submesoscale turbulence field. *Geophys. Res. Lett.* **40**, 4706–4711. | [10.1002/grl.50919](https://doi.org/10.1002/grl.50919) | The reference distribution for submesoscale ζ, δ and strain. Gives a population against which Ro = −67 can be placed rather than merely asserted. |
+| 5 | Dong, C., J. C. McWilliams, and A. F. Shchepetkin, 2007: Island wakes in deep water. *J. Phys. Oceanogr.* **37**(4), 962–981. | [10.1175/JPO3047.1](https://doi.org/10.1175/JPO3047.1) | The deep-water counterpart to Wolanski; sets the shedding regime and Strouhal expectations used in entry 8. |
+| 6 | LaCasce, J. H., 2008: Statistics from Lagrangian observations. *Prog. Oceanogr.* **77**, 1–29. | [10.1016/j.pocean.2008.02.002](https://doi.org/10.1016/j.pocean.2008.02.002) | Standard review; relevant only if cluster dispersion is ever analysed here, which it currently is not. |
+| 7 | Saffman, P. G., 1992: *Vortex Dynamics*. Cambridge University Press. | ISBN 978-0-521-42058-7 | Still outstanding from entry 6 — the Lamb–Oseen citation remains unverified. |
 
-**Why #1 matters most.** Zeiden et al. (2022) is Palau, SVP drifter *clusters*,
-relative vorticity — and it "compares estimates of vorticity from both velocity
-spatial gradients (least squares fitting) and velocity time series (wavelet
-analysis)". That is the same estimator comparison this project ran, on the same
-island, and it is the published answer to the question entry 7 was evaluated
-against. Two things to check on arrival:
-
-- Which estimator they preferred and why, against our conclusion that the
-  circulation/Stokes contour estimate is primary.
-- Their clusters were **~5 km** and reported vorticity up to **6f** in
-  submesoscale eddies. Ours is 67f on a ~0.64 km cluster. If the area-average
-  argument in `docs/02` §2.3 is right, a 5 km cluster around a ~1.2 km core
-  *should* report a far smaller |ζ| — so their 6f and our 67f may be the same
-  vortex population seen at different footprints. **That is a quantitative,
-  falsifiable prediction and it is worth testing explicitly**; if the numbers do
-  not reconcile, the area-average explanation is incomplete.
-
-Also worth chasing but not yet located: Wolanski, E., J. Imberger, and
-M. L. Heron, 1984: Island wakes in shallow coastal waters, *J. Geophys. Res.*
-**89**(C6), 10553–10569 ([10.1029/JC089iC06p10553](https://doi.org/10.1029/JC089iC06p10553))
-— the source of the island wake parameter quoted in entry 8; and Dong, C.,
-J. C. McWilliams, and A. F. Shchepetkin, 2007: Island wakes in deep water,
-*J. Phys. Oceanogr.* **37**(4).
+Lower priority, and only if the estimator question is reopened: Todd, R. E.,
+D. L. Rudnick, M. R. Mazloff, B. D. Cornuelle, and R. E. Davis, 2012,
+*J. Geophys. Res.* **117**, C02008
+([10.1029/2011JC007589](https://doi.org/10.1029/2011JC007589)) — the specific
+wavelet implementation entry 15 follows.
 
 ## A note on redistribution
 
@@ -608,8 +876,10 @@ licences require**, and the gap has grown:
 | 8–12 (*Oceanography*) | **CC BY 4.0** — "This is an open access article made available under the terms of the Creative Commons Attribution 4.0 International License" | Yes, with attribution |
 | 13 (Essink) | AMS; obtained via the NOAA Institutional Repository | Check before redistributing |
 | 14 (Kloosterziel) | author-posted copy, JFM/CUP copyright | **No** |
+| 15–20 | AMS / AGU, publisher copyright; retrieved by the maintainer under institutional access | **No** |
+| 21–22 (*Nonlin. Processes Geophys.*) | **CC BY** (Copernicus) | Yes, with attribution |
 
-So **six** of the local PDFs could legally be committed, not one. They are all
+So **eight** of the local PDFs could legally be committed, not one. They are all
 still excluded, because a blanket rule is easier to keep correct than a
 per-file exception, and because the repository's value is the analysis, not a
 PDF mirror.

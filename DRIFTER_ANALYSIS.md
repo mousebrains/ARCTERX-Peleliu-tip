@@ -186,6 +186,35 @@ and at 6.9 orbital cycles the record is too short for the one thing wavelets
 buy over Fourier. Evaluated and declined; `papers/README.md` entry 7 has the
 arithmetic.
 
+Zeiden et al. (2022) ran this exact comparison on Palau drifter clusters and
+found a **factor of 2** between a single-drifter wavelet estimate (Ro ~ 6) and
+an all-drifter least-squares fit (Ro ~ 3). Same effect, opposite geometry:
+their 5 km cluster is larger than the eddy core so their *cluster* estimate
+reads low, where our orbital loop is larger than the cluster so our
+*constellation* estimate reads low. The rule is the same either way — whichever
+estimator integrates over more area reads lower.
+
+**Gate threshold is uncalibrated and looser than the literature.** Huntley et
+al. (2022) derive, against a model where truth is known, a cluster-shape
+cutoff of Λ = 0.20 (Λ = 1 equilateral, 0 collinear) at scales of 5 km and
+below. Our `min_quality = 0.10` on the isoperimetric quotient
+(`src/eddy_kinematics.py:336`) is equivalent to Λ = 0.165 — about 20 % more
+permissive, against a recommendation the authors describe as already less
+stringent than common practice. We also apply one absolute threshold to both
+the four-drifter polygon (quotient max 0.785) and the leave-one-out triangles
+(max 0.605), so it is relatively looser where there are fewer constraints.
+Not changed, because it moves published numbers.
+
+**A better estimator exists and is not implemented.** Zeiden et al. use a
+solid-body-*constrained* least-squares fit alongside the plane fit, solving for
+`[u0, v0, ζ/2]` in one system. It returns the eddy centre as a fit parameter
+rather than by inverting `A⁻¹(c − U₀)`, and its error carries **no
+aspect-ratio term** — so it does not degrade as the polygon goes collinear,
+which is the failure our gate exists to suppress. It also filters
+tides: for their cluster C7 the semidiurnal band held 48 % of plane-fit
+vorticity variance but only 18 % of solid-body-fit variance. See
+`papers/README.md` entry 15.
+
 **Gate on polygon shape.** Leave-one-out triangles can go near-collinear, and
 Γ/A then diverges — spikes to ζ = 0.27 s⁻¹ (Rossby 15,000) before gating on
 the isoperimetric quotient 4πA/P².
@@ -231,7 +260,17 @@ Either flow past the tip exceeds the array-averaged value, or circulation
 accumulates over several cycles. The Thompson ADCP spot measurements could
 discriminate.
 
-*Evidence now favours the first horn, but does not settle it.* Johnston et al.
+*Both horns now have supporting evidence, and they are not exclusive.*
+
+For the second horn — circulation accumulating over several cycles — MacKinnon
+et al. (2019) measured at Palau's separation point where tides and sheared
+low-frequency flow act together, and conclude that including high-frequency
+oscillatory currents boosts the net flux of vorticity into the interior by a
+depth-dependent factor of **2 to 25**, warning that models omitting them
+misestimate momentum and energy loss. A 2–3× shortfall sits at the bottom of
+that range. Neither horn is confirmed for our event.
+
+For the first horn: Johnston et al.
 (2019) report that flow "intensifies" at the south point as it is constrained
 around the topography, and that the velocity difference across the wake eddy
 **exceeds 1 m/s** — against our array-averaged 0.64 m/s, a factor ~1.6 on

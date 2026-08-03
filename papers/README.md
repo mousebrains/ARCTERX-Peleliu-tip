@@ -39,6 +39,7 @@ implements it**.
 | 26 | Dong et al. 2007 | ✓ `Dong2007_JPO_island_wakes_deep_water.pdf` | title page |
 | 27 | Shcherbina et al. 2013 | ✓ `Shcherbina2013_GRL_submesoscale_statistics.pdf` | title page |
 | 28 | LaCasce 2008 | ✓ `LaCasce2008_ProgOcean_lagrangian_statistics.pdf` | title page |
+| 29 | Wolanski et al. 1984 ★ | ✓ `Wolanski1984_JGR_island_wakes_shallow_coastal.pdf` | title page |
 
 Every volume/issue/page figure below was read off the article's own title page
 — not from a publisher web record. Saffman (1992) is a book and is still
@@ -363,8 +364,9 @@ the discriminating measurement is still the Thompson ADCP.
 Two dimensionless numbers worth carrying over, both new to this project:
 
 ```
-island wake parameter (Wolanski et al. 1984)   Ref = H/(Cd L) ~ 100
+effective Reynolds number, as quoted by Johnston   Ref = H/(Cd L) ~ 100
    -> firmly in the vortex-street shedding regime
+   NOTE: this is NOT Wolanski's island wake parameter -- see entry 29
 Strouhal number                                St = L/(TU) ~ 0.2
    -> with L = 2 km, U = 0.5 m/s, shedding period T ~ 6 h
 separation criterion (Garrett 1995)            radius of curvature < H/Cd = 10-100 km
@@ -928,6 +930,67 @@ Held because Zeiden et al. lean on it to interpret cluster-scale growth
 next question if the drifter record is ever extended.
 
 
+### 29. Wolanski et al. (1984) — the island wake parameter, first hand ★
+
+> Wolanski, E., J. Imberger, and M. L. Heron, 1984: Island wakes in shallow
+> coastal waters. *Journal of Geophysical Research: Oceans* **89**(C6),
+> 10553–10569.
+> doi:[10.1029/JC089iC06p10553](https://doi.org/10.1029/JC089iC06p10553)
+
+Field study of the wake behind Rattray Island, Great Barrier Reef, and the
+origin of the island wake parameter. Obtaining it corrected an error this
+project had propagated at second hand.
+
+**The formula we were quoting is not theirs.** Wolanski's Eq. (8) is
+
+```
+P = U H^2 / (Kz W)
+```
+
+with `Kz` the **vertical** eddy diffusivity and `W` the **island width** — not
+`Ref = H/(Cd L)`. That second form comes from Johnston et al. (entry 8), who
+introduce it as "an effective Reynolds number (Signell and Geyer, 1991) or an
+island wake parameter (Wolanski et al., 1984)" and give a single expression for
+both. `H/(Cd L)` is the effective-Reynolds-number form; it is **not** Wolanski's
+Eq. (8), and this index and `DRIFTER_ANALYSIS.md` §7 previously attributed it
+to Wolanski. Both are now corrected.
+
+The two are related but not equal. Substituting Wolanski's own closure
+`Kz = 0.067 H U*` with `U* = sqrt(Cd) V` gives `P = H / (0.067 sqrt(Cd) W)`, so:
+
+| Cd | Wolanski *P* | Johnston *Ref* | ratio |
+|---|---|---|---|
+| 0.3 × 10⁻³ (Johnston's *measured* value) | **26** | **100** | 3.9 |
+| 1.0 × 10⁻³ | 14 | 30 | 2.1 |
+| 2.5 × 10⁻³ (conventional) | 9.0 | 12 | 1.3 |
+| 4.5 × 10⁻³ | 6.7 | 6.7 | 1.0 |
+
+They coincide only near Cd = 4.5 × 10⁻³ and diverge by a factor of ~4 at the
+drag coefficient Johnston actually measured. **The quoted "~100" is
+form-dependent; do not attach Wolanski's name to it.**
+
+**The conclusion survives, which is why this is a citation fix and not a
+result change.** Wolanski's regime map (their closing discussion): `P << 1`,
+friction dominates and quasi-potential flow results; `P ~ 1`, a stable attached
+wake, which is the Rattray Island case; as `P` increases, "the vorticity flux at
+the point of separation cannot be entirely negated in the eddy, and
+instabilities can be expected to develop farther downstream"; `P >> 1`, bottom
+friction negligible. At Peleliu both forms give `P` of order 25–100, i.e. `P ≫ 1`
+either way, so the eddy-shedding regime is robust to which formula is used.
+
+**Worth noting for the circulation budget.** Their framing is explicitly a
+*vorticity flux at the separation point* that the eddy must absorb — the same
+quantity MacKinnon et al. (entry 17) find is boosted 2–25× by tidal currents.
+Wolanski's `P` says how much vorticity the wake cannot absorb; MacKinnon says
+how much is being supplied. Those are the two halves of `DRIFTER_ANALYSIS.md`
+§7 and they are stated in compatible terms.
+
+**Still cited at second hand:** Signell, R. P., and W. R. Geyer, 1991, for the
+effective Reynolds number proper, and Garrett, C., 1995, for the separation
+criterion in entry 8. Neither is held here. Low priority — both are quoted only
+as regime indicators, not used numerically.
+
+
 ---
 
 ## Non-journal sources
@@ -1031,28 +1094,30 @@ Naming convention: `Author####_Journal_short-title.pdf`.
   for the Wanted entries returned HTTP 403 to an ordinary `curl` and were left
   alone; no user agent was spoofed and no proxy was used.
 
-## Wanted — two left
+## Wanted — one left
 
-| Citation | DOI / ISBN | Why, and where to look |
+| Citation | ISBN | Why |
 |---|---|---|
-| Wolanski, E., J. Imberger, and M. L. Heron, 1984: Island wakes in shallow coastal waters. *J. Geophys. Res.* **89**(C6), 10553–10569. | [10.1029/JC089iC06p10553](https://doi.org/10.1029/JC089iC06p10553) | Origin of the island wake parameter Ref = H/(Cd L) quoted in entry 8 and proposed for `DRIFTER_ANALYSIS.md` §7; currently cited at second hand. AGU/Wiley only — Crossref lists no alternative host, and pre-1997 JGR is not in an open archive. Wiley 403s automated requests but serves it in a browser. Wolanski was at AIMS; their repository is worth a look if Wiley fails. |
-| Saffman, P. G., 1992: *Vortex Dynamics*. Cambridge University Press. | ISBN 978-0-521-42058-7 | Outstanding since the beginning — entry 6. The Lamb–Oseen citation stays unverified until a copy arrives, and the page count in `references.bib` was quoted from memory. A library copy settles it; nothing online will. |
+| Saffman, P. G., 1992: *Vortex Dynamics*. Cambridge University Press. | 978-0-521-42058-7 | Entry 6, outstanding since the beginning. The Lamb–Oseen citation behind `fit_oseen()` stays unverified until a copy arrives, and the page count in `references.bib` was quoted from memory. A library copy settles it; nothing online will. |
 
-Everything else identified in this project's literature search has been
-obtained. **The four that were hard to find were all findable** — the DOIs were
-correct; the barrier was hosting, not identification:
+**Every journal article identified in this project's literature search has now
+been obtained.** The DOIs were correct in every case; the barrier was always
+hosting, never identification. What worked, in order of how often it worked:
 
-| | Route that worked |
+| Route | Examples |
 |---|---|
-| LaCasce 2008 | course copy, `pordlabs.ucsd.edu` |
-| Shcherbina 2013 | author copy, `staff.washington.edu/shcher` |
-| Dong 2007 | retrieved by the maintainer under institutional access |
-| Pattiaratchi 1987 | retrieved by the maintainer under institutional access |
+| Publisher, open access | Poulain; *Oceanography* 32(4) ×5; the two Lilly papers |
+| **Author's institutional page** | Shcherbina (`staff.washington.edu`), Kloosterziel (`soest.hawaii.edu`) |
+| **Course reading lists** | LaCasce (`pordlabs.ucsd.edu`), Weiss (UCSD physics) |
+| Government repository | Essink (NOAA Institutional Repository) |
+| Institutional access, by hand | Zeiden ×2, Huntley, MacKinnon, Ohlmann, Siegelman, Spydell, Rudnick, Pattiaratchi, Dong, Wolanski |
 
-General lesson for the next one of these: when a publisher 403s, try the
-**author's institutional page** and **course reading lists** before assuming the
-paper is out of reach. Both hits above came from those two routes, not from the
-publisher and not from a repository aggregator.
+Two lessons worth keeping. **When a publisher 403s an automated request, try the
+author's institutional page and course reading lists before concluding the paper
+is unavailable** — that recovered four of these. And **a paper obtained is worth
+more than a paper cited**: entry 29 corrected a formula this project had been
+attributing to the wrong source, and entry 25 caught a date typo printed in the
+journal itself. Neither error was visible without the PDF in hand.
 
 ## A note on redistribution
 

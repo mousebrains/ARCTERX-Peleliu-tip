@@ -45,14 +45,14 @@ ENTRIES=(
 # Entries 15-20 are held locally but are publisher copyright and are NOT
 # fetched here -- they were retrieved manually under institutional access.
 #
-# Wanted -- only two left (see "Wanted" in README.md):
-#   Wolanski et al. 1984, J Geophys Res 89(C6) 10553-10569  10.1029/JC089iC06p10553
-#     AGU/Wiley only; no alternative host. Browser download works, curl 403s.
+# Wanted -- one left:
 #   Saffman 1992, Vortex Dynamics (book), ISBN 978-0-521-42058-7 -- library copy.
 #
-# Tip for the next hard-to-find paper: when a publisher 403s, try the author's
-# institutional page and course reading lists before giving up. Both entries
-# above this comment were found that way.
+# Every journal article identified for this project has been obtained.  When a
+# publisher 403s, try the author's institutional page and course reading lists
+# before giving up; that route recovered four of them.  And obtain the paper --
+# entry 29 corrected a formula this project had attributed to the wrong source,
+# and entry 25 caught a date typo printed in the journal itself.
 
 missing=0
 for entry in "${ENTRIES[@]}"; do

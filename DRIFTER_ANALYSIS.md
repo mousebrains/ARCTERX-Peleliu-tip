@@ -311,10 +311,22 @@ half-cycle that they suggest the tide "may effectively generate eddies." A
 and the Thompson ADCP remains the discriminating measurement.
 
 Two dimensionless numbers from that paper are worth adopting and are not
-currently computed anywhere here: the island wake parameter
-Ref = H/(Cd L) ~ 100 (Wolanski et al. 1984), which places this flow in the
-vortex-street shedding regime, and the Strouhal number above. Both are cheap
-to evaluate from data already in `data/`.
+currently computed anywhere here: an effective Reynolds number
+Ref = H/(Cd L) ~ 100, which places this flow in the vortex-street shedding
+regime, and the Strouhal number above. Both are cheap to evaluate from data
+already in `data/`.
+
+*Attribution corrected.* This document previously credited Ref = H/(Cd L) to
+Wolanski et al. (1984). It is not their formula. Their island wake parameter
+(Eq. 8) is **P = U H²/(K_z W)**, with K_z the vertical eddy diffusivity and W
+the island width; H/(Cd L) is the effective-Reynolds-number form, which
+Johnston et al. present alongside a citation to both Wolanski and Signell &
+Geyer (1991). Substituting Wolanski's own closure K_z = 0.067 H U∗ makes the
+two differ by a factor of ~3.9 at the drag coefficient Johnston measured
+(P ≈ 26 against Ref ≈ 100), converging only near Cd = 4.5 × 10⁻³. Both are
+≫ 1, so the shedding-regime conclusion is unchanged — but quote the form you
+actually used and cite it correctly. `papers/README.md` entry 29 has the
+comparison.
 
 **Shedding direction.** C05 shows the *sign* of the along-axis flow is set by
 the subtidal current, with clean regimes in May 2023 (west 14–23, east 24–27).

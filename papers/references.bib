@@ -131,9 +131,11 @@
              Ro = zeta/f (same convention used here) ~30 by scaling and
              reaching 65-80 from moored ADCP, against -67 measured in this
              project.  Eddies shed every tidal cycle; intrinsic shedding
-             timescale ~6 h from St ~ 0.2.  Island wake parameter
-             Ref = H/(Cd L) ~ 100.  Supports the "tip flow exceeds the
-             array average" horn of the circulation-budget question}
+             timescale ~6 h from St ~ 0.2.  Effective Reynolds number
+             Ref = H/(Cd L) ~ 100 -- this form is theirs, NOT wolanski1984's
+             island wake parameter, which is P = U H^2/(Kz W); see the note on
+             wolanski1984.  Supports the "tip flow exceeds the array average"
+             horn of the circulation-budget question}
 }
 
 @article{rudnick2019vorticity,
@@ -482,6 +484,29 @@
              25.4 h of four drifters is far too short for dispersion
              statistics.  Held for the cluster-scale-growth interpretation if
              the record is ever extended}
+}
+
+
+% pattiaratchi1987 note above applies to header typos generally: verify against
+% the article, not against what cites it.  wolanski1984 is a case in point --
+% the formula widely attributed to it is not the one it contains.
+@article{wolanski1984,
+  author  = {Wolanski, E. and Imberger, J. and Heron, M. L.},
+  title   = {Island wakes in shallow coastal waters},
+  journal = {Journal of Geophysical Research: Oceans},
+  year    = {1984},
+  volume  = {89},
+  number  = {C6},
+  pages   = {10553--10569},
+  doi     = {10.1029/JC089iC06p10553},
+  note    = {Rattray Island, Great Barrier Reef.  THEIR island wake parameter
+             is Eq. (8), P = U H^2 / (Kz W), with Kz the VERTICAL eddy
+             diffusivity and W the island width -- NOT the Ref = H/(Cd L)
+             widely attributed to them, which is the effective-Reynolds-number
+             form (cf. Signell and Geyer 1991).  With their own closure
+             Kz = 0.067 H U*, the two differ by ~3.9x at Cd = 0.3e-3.  Regime
+             map: P << 1 quasi-potential, P ~ 1 stable attached wake,
+             P >> 1 frictionless with downstream instability}
 }
 
 @misc{cfconventions113,

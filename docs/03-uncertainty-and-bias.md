@@ -16,7 +16,7 @@ Code: `circulation_jackknife` in `src/eddy_kinematics.py`;
 | **resampling** (jackknife) | how much the answer moves when you drop data | anything common to every subsample |
 | **systematic** (bias) | the offset between the estimator and truth | nothing — but you need truth to see it |
 
-The project quotes the second. This section shows why the first is wrong by 5×,
+The project quotes the second. This section shows why the first is wrong by 5–7×,
 why the second is also optimistic, and measures the third directly.
 
 ## 3.2 Formal error, and why it is too small
@@ -53,8 +53,16 @@ Molinari and Kirwan hit the same wall in 1975: their vorticity series were
 observational error, which is what an underestimated error bar looks like from
 the outside.
 
-**Measured against synthetic truth**, the formal error is **5.2× too small**
-(`tests/test_synthetic_recovery.py`, and the standalone run in §3.5).
+**Measured against synthetic truth**, the formal error is **5.1× too small** at
+a 934 m cluster and **6.9×** at 1105 m — it degrades as the cluster grows,
+because the neglected term is the curvature of the field across the cluster.
+Test 5 in `tests/test_synthetic_recovery.py` computes this.
+
+The comparison has one trap worth stating, because getting it wrong inflates the
+answer by 2–3×: **truth must be the exact *area-averaged* $\zeta$ over the same
+polygon**, not the local $\zeta$ at the cluster centroid. The least-squares fit
+estimates an area average; comparing it against a local value folds in the
+averaging offset and returns 13–17× instead of 5–7×.
 
 ## 3.3 The jackknife, and what it cannot see
 
@@ -159,6 +167,7 @@ measured the mistake rather than the code. Consistency is not a detail here.
 | 2b. pooled solid-body null | $|\zeta|$ must not depend on cluster *size* in a constant-vorticity field | **+0.012**, $|\zeta|$ spread **0.0000 %** over 232–1238 m |
 | 3. Lamb–Oseen recovery | $\Gamma$ and $R$ come back from a known vortex | $\Gamma$ +2.7 %, $R$ −1.7 % |
 | 4. quadrature bias | trapezoid vs exact on real geometry | **−3.8 %** in $|\zeta|$ |
+| 5. formal-error realism | LSQ formal sd vs actual RMS error against exact truth | **5.1×** (934 m), **6.9×** (1105 m) too small |
 
 Test 1 is the sharpest: for a solid-body field the trapezoid rule is exact and
 Stokes' theorem is exact, so **any** deviation is an implementation bug rather

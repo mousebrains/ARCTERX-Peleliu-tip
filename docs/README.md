@@ -60,7 +60,7 @@ reason. The most instructive:
 - Stride-decimating pressure records raised the variance explained from 90 % to
   99 % *after* the mistake was fixed — the aliased version looked fine in
   isolation. See §4.
-- The formal least-squares uncertainty on vorticity is about 5× too small, and
+- The formal least-squares uncertainty on vorticity is 5–7× too small, and
   the leave-one-out uncertainty is blind to the largest error term. See §3.
 
 A number that arrives with a small error bar and no null test is a hypothesis.

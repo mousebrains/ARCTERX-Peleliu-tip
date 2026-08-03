@@ -34,6 +34,17 @@ Four tests, in increasing order of how much they can embarrass us:
   3. LAMB-OSEEN, RECOVERY.  Integrate drifters through a known Lamb-Oseen
      vortex and check that Gamma and the core radius come back.
 
+  5. FORMAL-ERROR REALISM.  docs/03 claims the least-squares formal error is
+     ~5x too small.  That number was previously asserted with nothing computing
+     it.  Here it is measured: integrate through a Lamb-Oseen field, compare the
+     LSQ zeta against the EXACT area-averaged zeta over the same polygon, and
+     take the ratio of actual RMS error to the formal standard deviation.
+
+     The truth must be the area average, not the local zeta at the centroid.
+     The LSQ fit returns an area average; comparing it against a local value
+     folds in the averaging offset and inflates the ratio to 13-17x rather than
+     the true 5-7x.
+
   4. QUADRATURE BIAS.  The circulation estimator evaluates the closed line
      integral with the trapezoid rule on four vertex velocities.  For a curved
      flow that is approximate.  Measure the error against a high-order
@@ -231,6 +242,51 @@ def test_oseen_recovery(A):
     return True
 
 
+def test_formal_error_realism(A):
+    """Is the least-squares formal error as optimistic as docs/03 claims?
+
+    Truth is the EXACT area-averaged zeta over the same polygon, computed by
+    Gauss-Legendre quadrature -- the quantity the LSQ fit actually estimates.
+    """
+    ts = (A["t"] - A["t"][0]) / 1000.0
+    out = []
+    for f in (0.5, 1.0):
+        X0, Y0 = _shrink(A["x"][0], A["y"][0], f)
+        X, Y, U, V, CX, CY = integrate(X0, Y0, ts, np.nanmean(X0) - 900,
+                                       np.nanmean(Y0) - 500, field_oseen)
+        n = len(A["t"])
+        zt = np.full(n, np.nan)
+        for i in range(n):
+            m = np.isfinite(X[i]) & np.isfinite(Y[i])
+            if m.sum() < 3:
+                continue
+            xs, ys = X[i][m], Y[i][m]
+            o = np.argsort(np.arctan2(ys - ys.mean(), xs - xs.mean()))
+            xs, ys = xs[o], ys[o]
+            Ar = 0.5 * np.sum(xs * np.roll(ys, -1) - np.roll(xs, -1) * ys)
+            if abs(Ar) < 1.0:
+                continue
+            zt[i] = _circ_exact(xs, ys, field_oseen, CX[i], CY[i]) / Ar
+        F = ek.fit_gradient(A["t"], X, Y, U, V, window_s=1800.0, step_s=600.0)
+        g = np.isfinite(zt)
+        tv = np.interp(F["t"], A["t"][g], zt[g])
+        m = np.isfinite(F["zeta"]) & np.isfinite(F["zeta_err"])
+        act = np.sqrt(np.nanmean((F["zeta"][m] - tv[m]) ** 2))
+        formal = np.nanmedian(F["zeta_err"][m])
+        cc = ek.circulation_kinematics(A["t"], X, Y, U, V)
+        sc = np.sqrt(np.nanmedian(np.abs(cc["area"])))
+        print(f"  5. formal err : cluster {sc:4.0f} m, actual/formal = "
+              f"{act/formal:.2f}x  (actual {act:.3e}, formal {formal:.3e})")
+        out.append(act / formal)
+    assert min(out) > 3.0, \
+        f"formal error must be clearly optimistic, got {out}"
+    assert min(out) < 9.0, \
+        f"ratio implausibly large -- check the truth definition, got {out}"
+    print("     -> docs/03's '5.2x too small' is reproduced; it is cluster-size")
+    print(f"        dependent, {min(out):.1f}x to {max(out):.1f}x over 934-1105 m")
+    return True
+
+
 def test_quadrature_bias(A):
     """Measure the trapezoid error using the REAL cluster geometry.
 
@@ -291,7 +347,8 @@ def main():
     A = _load()
     print("Synthetic recovery tests (truth is known by construction)")
     ok = all([test_solid_body_exact(A), test_solid_body_null(A),
-              test_oseen_recovery(A), test_quadrature_bias(A)])
+              test_oseen_recovery(A), test_formal_error_realism(A),
+              test_quadrature_bias(A)])
     print("\nPASS -- all null tests satisfied" if ok else "\nFAIL")
     return 0 if ok else 1
 

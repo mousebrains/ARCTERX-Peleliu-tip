@@ -17,10 +17,19 @@ Four tests, in increasing order of how much they can embarrass us:
      all.  Anything else is an implementation bug, not a modeling limitation.
 
   2. SOLID BODY, NULL FOR THE STRUCTURE CLAIM.  DRIFTER_ANALYSIS.md concludes
-     the vortex is "not solid body" because |zeta| falls with cluster radius
-     (r = -0.59).  That is only meaningful if a vortex which IS solid body
-     returns r ~ 0 through the same machinery.  If the pipeline manufactured a
-     negative correlation on its own, the conclusion would be an artifact.
+     the vortex is "not solid body" because |zeta| falls with the scale being
+     sampled (r = -0.56).  That is only meaningful if a vortex which IS solid
+     body returns r ~ 0 through the same machinery.  If the pipeline
+     manufactured a negative correlation on its own, the conclusion would be an
+     artifact.
+
+     The specific worry is that the quadrature error of test 4 grows with
+     cluster size, so a larger cluster might report a smaller |zeta| even in a
+     constant-vorticity field.  Advecting ONE cluster through a solid-body
+     field does not test that: such a cluster is rigid, so its size never
+     varies (CV ~ 1e-5) and the correlation is between two constants.  Test 2b
+     therefore pools clusters over a 232-1238 m range of sizes, which is the
+     comparison the claim actually rests on.
 
   3. LAMB-OSEEN, RECOVERY.  Integrate drifters through a known Lamb-Oseen
      vortex and check that Gamma and the core radius come back.
@@ -176,7 +185,32 @@ def test_solid_body_null(A):
     assert max(abs(r) for r in sb) < 0.25, \
         f"solid body must give ~0 correlation, got {sb}"
     assert max(lo) < -0.3, f"Lamb-Oseen must give a clear negative, got {lo}"
-    print("     -> the real data's -0.59 is diagnostic, not an artifact")
+
+    # 2b.  The test above advects a RIGID cluster, whose size never varies, so
+    # it cannot exercise a size-dependent artifact.  Pool many cluster sizes in
+    # the same constant-vorticity field and correlate against cluster scale.
+    zs, ss = [], []
+    for f in np.linspace(0.3, 1.6, 14):
+        X0, Y0 = _shrink(A["x"][0], A["y"][0], f)
+        X, Y, U, V, _, _ = integrate(X0, Y0, ts, np.nanmean(X0) - 900,
+                                     np.nanmean(Y0) - 500, field_solid)
+        cc = ek.circulation_kinematics(A["t"], X, Y, U, V)
+        z = np.abs(cc["zeta"])
+        sc = np.sqrt(np.abs(cc["area"]))
+        m = np.isfinite(z) & np.isfinite(sc)
+        zs.append(z[m])
+        ss.append(sc[m])
+    z, sc = np.concatenate(zs), np.concatenate(ss)
+    r_pool = np.corrcoef(z, sc)[0, 1]
+    spread = (z.max() - z.min()) / z.mean()
+    print(f"  2b. solid body POOLED over {sc.min():.0f}-{sc.max():.0f} m "
+          f"(n={len(z)}): corr = {r_pool:+.3f}, |zeta| spread {100*spread:.4f}%")
+    assert abs(r_pool) < 0.10, \
+        f"pooled solid body must give ~0 correlation, got {r_pool:+.3f}"
+    assert spread < 1e-6, \
+        f"|zeta| must be size-independent for a solid body, spread {spread:.2e}"
+    print("     -> no size-dependent artifact: the estimator returns the same")
+    print("        zeta at every cluster size, so the real -0.56 is diagnostic")
     return True
 
 

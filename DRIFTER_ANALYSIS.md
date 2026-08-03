@@ -124,8 +124,12 @@ range of averaging length (64 s → 1024 s).
 | \|strain\|/\|ζ\| | 0.36 |
 | cluster | 0.41 km² median (~640 m), vortex core ~1.2 km |
 
-**The vortex is not solid-body.** \|ζ\| falls monotonically with cluster scale
-(r = −0.59): 1.58 × 10⁻³ at ~350 m down to 0.98 × 10⁻³ at ~950 m. A
+**The vortex is not solid-body.** \|ζ\| falls with cluster scale
+(r = −0.56, 95 % CI [−0.63, −0.48], n = 343): 1.58 × 10⁻³ in the smallest
+quartile of cluster scale (median 419 m) down to 0.98 × 10⁻³ in the largest
+(903 m). Against radius from the fitted centre instead it is −0.37 — the
+conclusion is insensitive to that choice but the value is not, so quote the
+definition alongside the number. A
 Lamb–Oseen fit gives core radius **R ≈ 1.1–1.2 km** (quote the bootstrap
 interval, not a point estimate — §5) and Γ ≈ −5400 m² s⁻¹.
 

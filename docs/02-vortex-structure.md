@@ -50,23 +50,48 @@ dominate. Bins with fewer than 20 samples are dropped.
 For solid-body rotation $v_\theta \propto r$ and $\zeta$ is constant. The
 observed profile is not that:
 
-| cluster scale | $|\zeta|$ |
-|---|---|
-| ~350 m | 1.58 × 10⁻³ s⁻¹ |
-| ~950 m | 0.98 × 10⁻³ s⁻¹ |
+Binning $|\zeta_\text{circ}|$ into quartiles of cluster scale $\sqrt{A}$:
 
-$|\zeta|$ falls monotonically with the radius being sampled, correlation
-$r = -0.59$.
+| cluster scale (bin median) | $|\zeta|$ |
+|---|---|
+| 419 m | 1.58 × 10⁻³ s⁻¹ |
+| 903 m | 0.98 × 10⁻³ s⁻¹ |
+
+$|\zeta|$ falls with the scale being sampled:
+
+$$r = -0.56,\quad 95\%\ \text{CI}\ [-0.63, -0.48],\quad p = 9\times10^{-30},
+\quad n = 343$$
+
+**Two cautions on that number, both found by trying to reproduce it.**
+
+*It depends on what you correlate against.* "Cluster scale" and "distance from
+the vortex centre" are different variables, and they give different answers on
+this dataset — they are themselves only weakly related ($r = +0.27$):
+
+| $|\zeta|$ correlated against | $r$ | 95 % CI |
+|---|---|---|
+| cluster scale $\sqrt{A}$ | **−0.56** | [−0.63, −0.48] |
+| radius from the fitted centre | **−0.37** | [−0.46, −0.27] |
+
+Both are decisively non-zero, so the *conclusion* does not turn on the choice,
+but the value does. Quote the definition with the number, and do not quote a
+second decimal: the CI is ±0.07 wide.
+
+*Earlier versions of this document reported −0.59.* That is inside the CI
+above, but it is not reproducible from the current pipeline — the closest
+configuration returns −0.583 at $Q_{\min} = 0.20$ rather than the 0.10 actually
+used. The binned values 1.58/0.98 **are** exactly reproducible. Treat −0.56 as
+the number.
 
 ### Why this needed a null test
 
-A correlation of −0.59 is suggestive, not conclusive, because the estimator
+A correlation of −0.56 is suggestive, not conclusive, because the estimator
 itself could manufacture it: the quadrature error of §1.5 grows with cluster
 size, so a bigger cluster might report a smaller $|\zeta|$ *even for a
 solid-body vortex*. If so, the conclusion would be an artifact.
 
-`tests/test_synthetic_recovery.py` settles it by running a **true solid-body
-vortex** through the identical machinery:
+`tests/test_synthetic_recovery.py` runs a **true solid-body vortex** through the
+identical machinery. Advecting a single cluster gives:
 
 | field | cluster | corr($|\zeta|$, radius) |
 |---|---|---|
@@ -75,9 +100,31 @@ vortex** through the identical machinery:
 | Lamb–Oseen | 934 m | −0.56 |
 | Lamb–Oseen | 1105 m | −0.74 |
 
-A genuine solid body returns essentially zero correlation, and a genuine
-non-solid-body vortex returns −0.56 to −0.74. The observed −0.59 sits squarely
-in the second group. **The claim survives.**
+**That table does less work than it appears to, for two reasons.**
+
+First, a cluster advected through a *solid-body* field is rigid: its size never
+varies (CV ≈ 10⁻⁵) and $|\zeta|$ is exactly constant. The two solid-body rows
+correlate one constant against another, so they cannot exercise the
+size-dependent artifact they are meant to exclude.
+
+Second, those correlations are against **radius from the centre**, while the
+headline −0.56 is against **cluster scale** — different footprints. On the
+matched variable the synthetic Lamb–Oseen gives $r = +0.38$ and $+0.41$, the
+*opposite* sign, because in that synthetic the cluster shrinks as it moves
+outward ($r = -0.78$) whereas the real cluster grows slightly ($r = +0.27$).
+Comparing the real cluster-scale number against the synthetic radius numbers
+compares two different things.
+
+**Test 2b is the one that settles it.** Pool solid-body clusters over a
+232–1238 m range of sizes — the comparison the claim actually rests on:
+
+$$\text{corr}(|\zeta|, \sqrt{A}) = +0.012, \qquad
+\frac{\max|\zeta| - \min|\zeta|}{\overline{|\zeta|}} = 0.0000\,\%$$
+
+The estimator returns $1.200000\times10^{-3}$ at *every* cluster size from 232
+to 1238 m. There is no size-dependent artifact to worry about, so the observed
+−0.56 is diagnostic. **The claim survives** — on a stronger test than the one
+originally offered.
 
 The rotation shortfall in §1.8 is the same physics seen another way: the
 constellation turned 6.86 revolutions where the *core* vorticity predicts 8.83,

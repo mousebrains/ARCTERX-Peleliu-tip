@@ -156,6 +156,7 @@ measured the mistake rather than the code. Consistency is not a detail here.
 |---|---|---|
 | 1. solid-body exactness | an affine field must be recovered exactly | **0.0000 % error** |
 | 2. solid-body null | the "not solid body" diagnostic must not fire on a solid body | **+0.06 / −0.05** vs −0.56/−0.74 for Lamb–Oseen |
+| 2b. pooled solid-body null | $|\zeta|$ must not depend on cluster *size* in a constant-vorticity field | **+0.012**, $|\zeta|$ spread **0.0000 %** over 232–1238 m |
 | 3. Lamb–Oseen recovery | $\Gamma$ and $R$ come back from a known vortex | $\Gamma$ +2.7 %, $R$ −1.7 % |
 | 4. quadrature bias | trapezoid vs exact on real geometry | **−3.8 %** in $|\zeta|$ |
 
@@ -164,8 +165,18 @@ Stokes' theorem is exact, so **any** deviation is an implementation bug rather
 than a modeling limitation. Returning 0.0000 % is a strong statement that the
 circulation machinery is correctly coded.
 
-Test 2 is the one that protects a published conclusion. Without it, −0.59 is
+Test 2 is the one that protects a published conclusion. Without it, −0.56 is
 just a number that agrees with a hypothesis.
+
+**But test 2 alone is weaker than it looks, and 2b is what actually closes it.**
+A cluster advected through a solid-body field is rigid — its size never varies
+(CV ≈ 10⁻⁵) and $|\zeta|$ is exactly constant — so the two solid-body rows
+correlate one constant against another and cannot exercise the size-dependent
+artifact they are meant to exclude. Test 2b pools clusters across a 232–1238 m
+range of sizes and finds the estimator returns $1.200000\times10^{-3}$ at every
+one of them. That is the null the conclusion actually needs. See
+`docs/02-vortex-structure.md` §2.3, which also documents a footprint mismatch in
+how test 2 was originally compared against the real data.
 
 ## 3.6 Other free parameters
 

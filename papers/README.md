@@ -33,6 +33,12 @@ implements it**.
 | 20 | Siegelman et al. 2023 | ✓ `Siegelman2023_JPO_near_inertial_around_islands.pdf` | title page |
 | 21 | Lilly & Gascard 2006 | ✓ `LillyGascard2006_NPG_wavelet_ridge_elliptical.pdf` | title page |
 | 22 | Lilly & Pérez-Brunius 2021 | ✓ `LillyPerezBrunius2021_NPG_wavelet_ridge_eddy_detection.pdf` | title page |
+| 23 | Spydell et al. 2019 ★ | ✓ `Spydell2019_JTECH_drifter_gps_error_vorticity.pdf` | title page |
+| 24 | Rudnick et al. 2015 | ✓ `Rudnick2015_JPO_gulf_mexico_cyclonic_eddies_gliders.pdf` | title page |
+| 25 | Pattiaratchi et al. 1987 | ✓ `Pattiaratchi1987_JGR_island_wakes_headland_eddies.pdf` | Crossref (see note) |
+| 26 | Dong et al. 2007 | ✓ `Dong2007_JPO_island_wakes_deep_water.pdf` | title page |
+| 27 | Shcherbina et al. 2013 | ✓ `Shcherbina2013_GRL_submesoscale_statistics.pdf` | title page |
+| 28 | LaCasce 2008 | ✓ `LaCasce2008_ProgOcean_lagrangian_statistics.pdf` | title page |
 
 Every volume/issue/page figure below was read off the article's own title page
 — not from a publisher web record. Saffman (1992) is a book and is still
@@ -46,11 +52,16 @@ How to read the numbering:
 | 6 | Lamb–Oseen reference, still outstanding |
 | 7 | Consulted, method **declined**; see the entry for the arithmetic |
 | **8–12, 17, 19** | **Site and phenomenon** — Palau, and in entry 8's case the Peleliu tip itself |
-| **13, 15, 16, 18** | **Method** — drifter-cluster estimator accuracy |
+| 25, 26 | Island-wake theory and modelling: headland vs island, shallow vs deep |
+| 27, 28 | Submesoscale reference statistics; Lagrangian statistics (unused) |
+| **13, 15, 16, 18, 23, 24** | **Method** — drifter-cluster estimator accuracy and error |
 | 14, 20 | Dynamics support: vortex stability, near-inertial theory |
 | 21–22 | The wavelet-ridge primary sources behind the entry 7 decision |
 
-The three marked ★ are the ones to read first if you read nothing else:
+The ones marked ★ are to read first if you read nothing else. **23**
+(Spydell et al. 2019) argues our cluster-shape gate uses the wrong variable and
+supplies the right one, and is the strongest independent support for quoting the
+jackknife rather than the formal error.
 **15** (Zeiden et al. 2022 ★★) is the closest published analysis to this one and
 ran the same estimator comparison; **16** (Huntley et al. 2022) calibrates the
 cluster-shape gate we set by hand; **17** (MacKinnon et al. 2019) supplies a
@@ -750,6 +761,173 @@ single-drifter approach is ever revisited.
 Neither changes the conclusion in entry 7. The binding constraint here is 6.9
 orbital cycles of record, not the quality of the method.
 
+### 23. Spydell et al. (2019) — what actually sets the vorticity error ★
+
+> Spydell, M. S., F. Feddersen, and J. MacMahan, 2019: The effect of drifter GPS
+> errors on estimates of submesoscale vorticity. *Journal of Atmospheric and
+> Oceanic Technology* **36**(11), 2101–2119.
+> doi:[10.1175/JTECH-D-19-0108.1](https://doi.org/10.1175/JTECH-D-19-0108.1)
+> — received 25 Jun 2019, final form 22 Aug 2019.
+
+Derives the **a priori** vorticity error for a drifter cluster, and validates it
+against two stationary GPS experiments where the true vorticity is exactly zero
+— a null test of the same kind this project relies on. Their Eq. (16):
+
+```
+sigma_zeta^2 = (1/N) (sigma_u^2 / la^2) (1 + la^2/lb^2) (1 - rho_u1u2)
+```
+
+with `la <= lb` the minor and major axes of the cluster (from the position
+covariance matrix), `N` the drifter count, `sigma_u` the velocity error and
+`rho` the cross-drifter error correlation. Error falls only as `N^-1/2`, so
+"large numbers of drifters are required to reduce vorticity error
+substantially" — with N = 4 we are near the floor of what helps.
+
+**Their headline conclusion contradicts how we gate.** In their words:
+"Previously, cluster area or ellipticity were used as criteria to distinguish
+error. We show that the drifter cluster **minor axis** (narrowness) is a key
+time-dependent factor affecting vorticity error." They find vorticity error
+exceeding 5f once the minor axis drops below 50 m, even at velocity errors under
+0.004 m s⁻¹. We gate on the isoperimetric quotient — an area/ellipticity
+measure, exactly the class they argue against.
+
+**Applied to our cluster** (`data/eddy_kinematics.npz`, 355 windows):
+
+| | |
+|---|---|
+| minor axis λ_a, median | **236 m** (p5 = 64 m, min 12 m) |
+| major axis λ_b, median | 741 m |
+| windows with λ_a < 50 m | 12 (3.4 %) |
+| — caught by our existing gate | 9 |
+| — **leaked through** | **3** |
+| correlation, our quality vs λ_a | **r = 0.82** |
+
+So the isoperimetric gate is largely doing the right thing *by proxy* — it
+correlates strongly with narrowness — but it is not the right variable and
+three narrow windows survive it. Those three carry median |ζ| = 3.2 × 10⁻³ s⁻¹,
+**2.7× the record median**, which is the signature Spydell predicts.
+
+Adding `λ_a >= 50 m` as a second gate:
+
+```
+current gate        n=343   median zeta = -1.190e-3   Ro = -67.0
++ minor-axis gate   n=340   median zeta = -1.187e-3   Ro = -66.9   (0.23 % change)
+p95 |zeta|          2.42e-3  ->  2.31e-3   (-4.5 %)
+```
+
+**The headline is untouched and the tail tightens.** This is a cheap,
+principled improvement; it is not applied, because changing gates changes
+published numbers and that is a decision, not a detail. The 0.23 % result is
+also a useful null test in its own right: it confirms the medians are robust to
+the gate, which is what `DRIFTER_ANALYSIS.md` §5 claims.
+
+**It also independently vindicates quoting the jackknife.** Eq. (16) propagates
+*instrument* error only — the authors say so explicitly. Evaluated on our
+geometry it predicts:
+
+| σ_u | median σ_ζ | as % of \|ζ\| |
+|---|---|---|
+| 0.010 m s⁻¹ (SVP GPS, per Essink) | 2.3 × 10⁻⁵ | 1.9 % |
+| 0.004 m s⁻¹ | 9.0 × 10⁻⁶ | 0.8 % |
+| 0.002 m s⁻¹ | 4.5 × 10⁻⁶ | 0.4 % |
+
+against our **5 %** formal error and **17 %** jackknife spread. Instrument error
+is roughly a tenth of the jackknife, so the 17 % really is dominated by flow
+curvature and unresolved scales — Essink's "aliasing of unresolved scales" —
+not by GPS noise. Two caveats, both conservative: ρ was set to 0, and a positive
+error correlation would make σ_ζ *smaller* still; and our buoys report Doppler
+velocity block-averaged over 2048 samples, so σ_u is likely at the low end.
+
+**Action:** if the error budget is ever revisited, this is the paper to
+implement — report λ_a alongside the quotient, and gate on it.
+
+### 24. Rudnick et al. (2015) — the solid-body fit
+
+> Rudnick, D. L., G. Gopalakrishnan, and B. D. Cornuelle, 2015: Cyclonic eddies
+> in the Gulf of Mexico: observations by underwater gliders and simulations by
+> numerical model. *Journal of Physical Oceanography* **45**(1), 313–326.
+> doi:[10.1175/JPO-D-14-0138.1](https://doi.org/10.1175/JPO-D-14-0138.1)
+> — received 16 Jul 2014, final form 20 Oct 2014.
+
+The source Zeiden et al. (entry 15) cite for the solid-body-constrained fit.
+Their §3 fits "a model of solid body rotation in which the eastward u and
+northward v velocity components are given by" a centre plus a rigid rotation,
+with "z ... relative vertical vorticity (twice the rotation rate)", and Table 1
+tabulates the results. They also test the assumption rather than assume it,
+noting the model describes "most, but not all" of the observed structure and
+relaxing it to check.
+
+Held for the method, not the region. Combined with entries 15 and 23 it is the
+recipe for the estimator this project does not yet have: a fit that returns the
+eddy centre directly and whose error does not blow up as the polygon flattens.
+
+### 25. Pattiaratchi et al. (1987) — island wakes vs headland eddies
+
+> Pattiaratchi, C., A. James, and M. Collins, 1987: Island wakes and headland
+> eddies: a comparison between remotely sensed data and laboratory experiments.
+> *Journal of Geophysical Research: Oceans* **92**(C1), 783–794.
+> doi:[10.1029/JC092iC01p00783](https://doi.org/10.1029/JC092iC01p00783)
+
+**Citation caveat.** The PDF's own running header reads "JANUARY 15, **1986**",
+which is wrong — volume 92 is 1987, and Crossref gives an issue date of
+15 January 1987. This is a typo in the printed journal, not a mis-download.
+**Cite 1987.** Recorded here because a header is a claim, not a fact, and this
+one would otherwise propagate.
+
+Identifies island wakes and headland eddies in visible-band satellite and
+airborne imagery of the Bristol and English Channels — high tidal currents,
+high turbidity, suspended sediment as a passive tracer — and compares them
+against laboratory experiments. Directly relevant as the **headland** case: our
+vortex is shed from a headland (the Peleliu tip), not from an isolated island,
+and this is the paper that treats the two side by side.
+
+### 26. Dong et al. (2007) — island wakes in deep water
+
+> Dong, C., J. C. McWilliams, and A. F. Shchepetkin, 2007: Island wakes in deep
+> water. *Journal of Physical Oceanography* **37**(4), 962–981.
+> doi:[10.1175/JPO3047.1](https://doi.org/10.1175/JPO3047.1)
+> — received 21 Oct 2005, final form 12 Sep 2006.
+
+The deep-water counterpart to Wolanski's shallow-water regime, and the source of
+the Strouhal/shedding expectations invoked in entry 8. Idealised ROMS
+simulations of flow past an island: wake instability, coherent vortex formation,
+and the mesoscale-to-submesoscale eddy field that follows. This is the modelling
+reference against which the Peleliu observations should be read, and the natural
+place to check whether our single 25.4 h event is a typical shed vortex or an
+unusual one.
+
+### 27. Shcherbina et al. (2013) — the submesoscale reference distribution
+
+> Shcherbina, A. Y., E. A. D'Asaro, C. M. Lee, J. M. Klymak, M. J. Molemaker,
+> and J. C. McWilliams, 2013: Statistics of vertical vorticity, divergence, and
+> strain in a developed submesoscale turbulence field. *Geophysical Research
+> Letters* **40**(17), 4706–4711.
+> doi:[10.1002/grl.50919](https://doi.org/10.1002/grl.50919)
+> — author copy, staff.washington.edu.
+
+The first consistent sampling of the **full horizontal velocity gradient
+tensor** at O(1 km) in the open ocean, from two vessels running parallel tracks.
+It supplies what a single case study cannot: a *population* of ζ, δ and strain
+at our scale, against which Ro = −67 can be placed rather than merely asserted.
+Also the source of the k⁻² near-surface KE spectrum Zeiden et al. use to argue
+that unresolved sub-cluster currents are O(0.01) m s⁻¹ — the number that sets
+σ_u in entry 23.
+
+### 28. LaCasce (2008) — Lagrangian statistics review
+
+> LaCasce, J. H., 2008: Statistics from Lagrangian observations. *Progress in
+> Oceanography* **77**(1), 1–29.
+> doi:[10.1016/j.pocean.2008.02.002](https://doi.org/10.1016/j.pocean.2008.02.002)
+> — course copy, pordlabs.ucsd.edu.
+
+The standard review of single- and multi-particle Lagrangian statistics.
+**Not currently used**: this project measures kinematics, not dispersion, and
+25.4 h of four drifters is far too short for meaningful dispersion statistics.
+Held because Zeiden et al. lean on it to interpret cluster-scale growth
+(distinguishing turbulent cascade from lateral shear), which is the natural
+next question if the drifter record is ever extended.
+
+
 ---
 
 ## Non-journal sources
@@ -802,6 +980,12 @@ Zeiden2019_JPO_glider_island_wake_palau.pdf                     J Phys Oceanogr 
 Siegelman2023_JPO_near_inertial_around_islands.pdf              J Phys Oceanogr 53(2), 433-455
 LillyGascard2006_NPG_wavelet_ridge_elliptical.pdf               Nonlin Processes Geophys 13, 467-483
 LillyPerezBrunius2021_NPG_wavelet_ridge_eddy_detection.pdf      Nonlin Processes Geophys 28, 181-212
+Spydell2019_JTECH_drifter_gps_error_vorticity.pdf               J Atmos Ocean Tech 36(11), 2101-2119
+Rudnick2015_JPO_gulf_mexico_cyclonic_eddies_gliders.pdf         J Phys Oceanogr 45(1), 313-326
+Pattiaratchi1987_JGR_island_wakes_headland_eddies.pdf           J Geophys Res 92(C1), 783-794
+Dong2007_JPO_island_wakes_deep_water.pdf                        J Phys Oceanogr 37(4), 962-981
+Shcherbina2013_GRL_submesoscale_statistics.pdf                  Geophys Res Lett 40(17), 4706-4711
+LaCasce2008_ProgOcean_lagrangian_statistics.pdf                 Prog Oceanogr 77(1), 1-29
 ```
 
 Naming convention: `Author####_Journal_short-title.pdf`.
@@ -829,6 +1013,13 @@ Naming convention: `Author####_Journal_short-title.pdf`.
   convention here; two carried no useful embedded title, so each was identified
   from its title page rather than its filename.
 - Entries **21–22** are the Copernicus open-access PDFs.
+- Entries **23–26** were retrieved by the maintainer under institutional access;
+  **27–28** are author and course copies. Volume, issue, pages and dates were
+  read off each title page, except entry 25 — see the next line.
+- Entry **25** (Pattiaratchi) is the one case where the article's own header is
+  **wrong**: it prints "JANUARY 15, 1986" on a volume-92 paper, which is 1987.
+  Date and DOI taken from Crossref; volume, issue and pages agree with the
+  printed header. **Cite 1987.**
 - Entry **14** (Kloosterziel & van Heijst): volume and pages read off the title
   page. The author-posted copy carries no DOI, so the DOI alone was confirmed
   against Crossref rather than the article.
@@ -840,28 +1031,28 @@ Naming convention: `Author####_Journal_short-title.pdf`.
   for the Wanted entries returned HTTP 403 to an ordinary `curl` and were left
   alone; no user agent was spoofed and no proxy was used.
 
-## Wanted — next round
+## Wanted — two left
 
-The six previously listed here **have all been obtained** (entries 15–20).
-These are the next targets, drawn from the reference lists of what arrived.
-Metadata is Crossref or the citing paper's reference list — **not** a title
-page — so treat it as unverified until the PDF is in hand.
+| Citation | DOI / ISBN | Why, and where to look |
+|---|---|---|
+| Wolanski, E., J. Imberger, and M. L. Heron, 1984: Island wakes in shallow coastal waters. *J. Geophys. Res.* **89**(C6), 10553–10569. | [10.1029/JC089iC06p10553](https://doi.org/10.1029/JC089iC06p10553) | Origin of the island wake parameter Ref = H/(Cd L) quoted in entry 8 and proposed for `DRIFTER_ANALYSIS.md` §7; currently cited at second hand. AGU/Wiley only — Crossref lists no alternative host, and pre-1997 JGR is not in an open archive. Wiley 403s automated requests but serves it in a browser. Wolanski was at AIMS; their repository is worth a look if Wiley fails. |
+| Saffman, P. G., 1992: *Vortex Dynamics*. Cambridge University Press. | ISBN 978-0-521-42058-7 | Outstanding since the beginning — entry 6. The Lamb–Oseen citation stays unverified until a copy arrives, and the page count in `references.bib` was quoted from memory. A library copy settles it; nothing online will. |
 
-| Priority | Citation | DOI | Why |
-|---|---|---|---|
-| **1** | Spydell, M., F. Feddersen, and J. MacMahan, 2019: The effect of drifter GPS errors on estimates of submesoscale vorticity. *J. Atmos. Oceanic Technol.* **36**(11), 2101–2119. | [10.1175/JTECH-D-19-0108.1](https://doi.org/10.1175/JTECH-D-19-0108.1) | Source of the σ_ζ² ∝ (1+1/a²)/b² geometry-dependent vorticity error used by entry 15. Our error budget is the weakest part of the analysis; this is the paper that formalises it. |
-| **2** | Rudnick, D. L., G. Gopalakrishnan, and B. D. Cornuelle, 2015: Cyclonic eddies in the Gulf of Mexico: observations by underwater gliders and simulations by data assimilation. *J. Phys. Oceanogr.* **45**(1), 313–326. | [10.1175/JPO-D-14-0138.1](https://doi.org/10.1175/JPO-D-14-0138.1) | Source of the solid-body-constrained fit that entry 15 uses, which returns the eddy centre as a fit parameter and is immune to cluster aspect ratio. The single most promising method improvement identified so far. |
-| 3 | Wolanski, E., J. Imberger, and M. L. Heron, 1984: Island wakes in shallow coastal waters. *J. Geophys. Res.* **89**(C6), 10553–10569. | [10.1029/JC089iC06p10553](https://doi.org/10.1029/JC089iC06p10553) | Origin of the island wake parameter Ref = H/(Cd L) quoted in entry 8 and now proposed for `DRIFTER_ANALYSIS.md` §7. Currently cited at second hand. |
-| 4 | Shcherbina, A. Y., E. A. D'Asaro, C. M. Lee, J. M. Klymak, M. J. Molemaker, and J. C. McWilliams, 2013: Statistics of vertical vorticity, divergence and strain in a developed submesoscale turbulence field. *Geophys. Res. Lett.* **40**, 4706–4711. | [10.1002/grl.50919](https://doi.org/10.1002/grl.50919) | The reference distribution for submesoscale ζ, δ and strain. Gives a population against which Ro = −67 can be placed rather than merely asserted. |
-| 5 | Dong, C., J. C. McWilliams, and A. F. Shchepetkin, 2007: Island wakes in deep water. *J. Phys. Oceanogr.* **37**(4), 962–981. | [10.1175/JPO3047.1](https://doi.org/10.1175/JPO3047.1) | The deep-water counterpart to Wolanski; sets the shedding regime and Strouhal expectations used in entry 8. |
-| 6 | LaCasce, J. H., 2008: Statistics from Lagrangian observations. *Prog. Oceanogr.* **77**, 1–29. | [10.1016/j.pocean.2008.02.002](https://doi.org/10.1016/j.pocean.2008.02.002) | Standard review; relevant only if cluster dispersion is ever analysed here, which it currently is not. |
-| 7 | Saffman, P. G., 1992: *Vortex Dynamics*. Cambridge University Press. | ISBN 978-0-521-42058-7 | Still outstanding from entry 6 — the Lamb–Oseen citation remains unverified. |
+Everything else identified in this project's literature search has been
+obtained. **The four that were hard to find were all findable** — the DOIs were
+correct; the barrier was hosting, not identification:
 
-Lower priority, and only if the estimator question is reopened: Todd, R. E.,
-D. L. Rudnick, M. R. Mazloff, B. D. Cornuelle, and R. E. Davis, 2012,
-*J. Geophys. Res.* **117**, C02008
-([10.1029/2011JC007589](https://doi.org/10.1029/2011JC007589)) — the specific
-wavelet implementation entry 15 follows.
+| | Route that worked |
+|---|---|
+| LaCasce 2008 | course copy, `pordlabs.ucsd.edu` |
+| Shcherbina 2013 | author copy, `staff.washington.edu/shcher` |
+| Dong 2007 | retrieved by the maintainer under institutional access |
+| Pattiaratchi 1987 | retrieved by the maintainer under institutional access |
+
+General lesson for the next one of these: when a publisher 403s, try the
+**author's institutional page** and **course reading lists** before assuming the
+paper is out of reach. Both hits above came from those two routes, not from the
+publisher and not from a repository aggregator.
 
 ## A note on redistribution
 

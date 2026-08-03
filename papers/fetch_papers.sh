@@ -35,6 +35,9 @@ ENTRIES=(
 # Copernicus open access (CC BY).
 "LillyGascard2006_NPG_wavelet_ridge_elliptical.pdf|https://npg.copernicus.org/articles/13/467/2006/npg-13-467-2006.pdf|Lilly & Gascard 2006, Nonlin Processes Geophys 13, 467-483"
 "LillyPerezBrunius2021_NPG_wavelet_ridge_eddy_detection.pdf|https://npg.copernicus.org/articles/28/181/2021/npg-28-181-2021.pdf|Lilly & Perez-Brunius 2021, Nonlin Processes Geophys 28, 181-212"
+# Author and course copies -- these worked where the publishers 403'd.
+"Shcherbina2013_GRL_submesoscale_statistics.pdf|http://staff.washington.edu/shcher/papers/grl50919.pdf|Shcherbina et al. 2013, Geophys Res Lett 40(17), 4706-4711"
+"LaCasce2008_ProgOcean_lagrangian_statistics.pdf|https://pordlabs.ucsd.edu/pcessi/theory2019/lacasce_lagrangian_08.pdf|LaCasce 2008, Prog Oceanogr 77(1), 1-29"
 # Author-posted copy (Univ. of Hawai'i).
 "KloosterzielVanHeijst1991_JFM_unstable_barotropic_vortices.pdf|http://www.soest.hawaii.edu/oceanography/faculty/kloosterziel/pdfs/unstable.pdf|Kloosterziel & van Heijst 1991, J Fluid Mech 223, 1-24"
 )
@@ -42,12 +45,14 @@ ENTRIES=(
 # Entries 15-20 are held locally but are publisher copyright and are NOT
 # fetched here -- they were retrieved manually under institutional access.
 #
-# Wanted next (see "Wanted" in README.md); these would change code, not prose:
-#   Spydell et al. 2019, J Atmos Ocean Tech 36(11) 2101-2119  10.1175/JTECH-D-19-0108.1
-#   Rudnick et al. 2015, J Phys Oceanogr 45(1) 313-326        10.1175/JPO-D-14-0138.1
-#   Wolanski et al. 1984, J Geophys Res 89(C6) 10553-10569    10.1029/JC089iC06p10553
-#   Shcherbina et al. 2013, Geophys Res Lett 40 4706-4711     10.1002/grl.50919
-#   Dong et al. 2007, J Phys Oceanogr 37(4) 962-981           10.1175/JPO3047.1
+# Wanted -- only two left (see "Wanted" in README.md):
+#   Wolanski et al. 1984, J Geophys Res 89(C6) 10553-10569  10.1029/JC089iC06p10553
+#     AGU/Wiley only; no alternative host. Browser download works, curl 403s.
+#   Saffman 1992, Vortex Dynamics (book), ISBN 978-0-521-42058-7 -- library copy.
+#
+# Tip for the next hard-to-find paper: when a publisher 403s, try the author's
+# institutional page and course reading lists before giving up. Both entries
+# above this comment were found that way.
 
 missing=0
 for entry in "${ENTRIES[@]}"; do

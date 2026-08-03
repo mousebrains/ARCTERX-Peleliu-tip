@@ -205,6 +205,35 @@ the four-drifter polygon (quotient max 0.785) and the leave-one-out triangles
 (max 0.605), so it is relatively looser where there are fewer constraints.
 Not changed, because it moves published numbers.
 
+**And we may be gating on the wrong variable entirely.** Spydell et al. (2019)
+state it directly: "cluster area or ellipticity were used as criteria to
+distinguish error. We show that the drifter cluster **minor axis** (narrowness)
+is a key time-dependent factor." Our quotient is an area/ellipticity measure.
+Checking our own cluster against their criterion:
+
+| | |
+|---|---|
+| minor axis λ_a, median | 236 m (p5 = 64 m, min 12 m) |
+| windows below their 50 m danger threshold | 12 of 355 |
+| caught by the existing gate | 9 |
+| **leaked through** | **3**, carrying median \|ζ\| = 3.2 × 10⁻³ (2.7× the record median) |
+| correlation, our quality vs λ_a | r = 0.82 |
+
+The quotient tracks narrowness well (r = 0.82) so it mostly works by proxy, but
+it is not the right variable. Adding `λ_a ≥ 50 m` moves the median by **0.23 %**
+(Ro −67.0 → −66.9) and tightens p95 |ζ| by 4.5 % — a free improvement to the
+tail, and a further confirmation that the medians are robust.
+
+**Instrument error is not what the 17 % is measuring.** Spydell's Eq. (16)
+propagates instrument error alone. On our geometry it gives σ_ζ of 0.4–1.9 % of
+|ζ| across plausible velocity errors (0.002–0.010 m s⁻¹), against our 5 % formal
+and 17 % jackknife. GPS noise is roughly a tenth of the jackknife, so the
+leave-one-out spread really is dominated by flow curvature and unresolved
+scales — exactly what it was claimed to measure. Both caveats run the same way:
+the calculation set the error correlation to zero, and our Doppler velocities
+are block-averaged over 2048 samples, so the true instrument term is smaller
+still.
+
 **A better estimator exists and is not implemented.** Zeiden et al. use a
 solid-body-*constrained* least-squares fit alongside the plane fit, solving for
 `[u0, v0, ζ/2]` in one system. It returns the eddy centre as a fit parameter

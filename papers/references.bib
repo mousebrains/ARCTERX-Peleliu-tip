@@ -378,6 +378,112 @@
              worth reading if the entry 7 decision is ever revisited}
 }
 
+
+% ---------------------------------------------------------------------------
+% Cluster error, island-wake theory, reference statistics
+% ---------------------------------------------------------------------------
+
+@article{spydell2019,
+  author  = {Spydell, Matthew S. and Feddersen, Falk and MacMahan, Jamie},
+  title   = {The effect of drifter {GPS} errors on estimates of submesoscale
+             vorticity},
+  journal = {Journal of Atmospheric and Oceanic Technology},
+  year    = {2019},
+  volume  = {36},
+  number  = {11},
+  pages   = {2101--2119},
+  doi     = {10.1175/JTECH-D-19-0108.1},
+  note    = {A priori vorticity error, Eq. (16):
+             sigma_z^2 = (1/N)(sigma_u^2/la^2)(1 + la^2/lb^2)(1 - rho),
+             la/lb the cluster minor/major axes.  ARGUES AGAINST OUR GATE:
+             "cluster area or ellipticity were used as criteria ... we show
+             that the drifter cluster minor axis (narrowness) is a key
+             time-dependent factor".  On our data the minor axis is 236 m
+             median, 12 windows below their 50 m danger threshold, 3 of which
+             leak past our isoperimetric gate carrying 2.7x the median |zeta|.
+             Their instrument-only error is ~1/10 of our 17 percent jackknife,
+             confirming the jackknife is dominated by flow curvature, not GPS}
+}
+
+@article{rudnick2015,
+  author  = {Rudnick, Daniel L. and Gopalakrishnan, Ganesh and
+             Cornuelle, Bruce D.},
+  title   = {Cyclonic eddies in the {Gulf} of {Mexico}: Observations by
+             underwater gliders and simulations by numerical model},
+  journal = {Journal of Physical Oceanography},
+  year    = {2015},
+  volume  = {45},
+  number  = {1},
+  pages   = {313--326},
+  doi     = {10.1175/JPO-D-14-0138.1},
+  note    = {Source of the solid-body-constrained fit used by zeiden2022.
+             Fits a rigid-rotation model with zeta twice the rotation rate,
+             and tests rather than assumes it}
+}
+
+% pattiaratchi1987: the PDF's running header prints "JANUARY 15, 1986", which is
+% WRONG -- volume 92 is 1987 and Crossref gives 15 January 1987.  Cite 1987.
+@article{pattiaratchi1987,
+  author  = {Pattiaratchi, Charitha and James, Alec and Collins, Michael},
+  title   = {Island wakes and headland eddies: A comparison between remotely
+             sensed data and laboratory experiments},
+  journal = {Journal of Geophysical Research: Oceans},
+  year    = {1987},
+  volume  = {92},
+  number  = {C1},
+  pages   = {783--794},
+  doi     = {10.1029/JC092iC01p00783},
+  note    = {The HEADLAND case -- our vortex is shed from the Peleliu headland,
+             not an isolated island, and this compares the two directly}
+}
+
+@article{dong2007,
+  author  = {Dong, Changming and McWilliams, James C. and
+             Shchepetkin, Alexander F.},
+  title   = {Island wakes in deep water},
+  journal = {Journal of Physical Oceanography},
+  year    = {2007},
+  volume  = {37},
+  number  = {4},
+  pages   = {962--981},
+  doi     = {10.1175/JPO3047.1},
+  note    = {Idealised ROMS island wakes; deep-water counterpart to
+             Wolanski's shallow regime and source of the Strouhal shedding
+             expectations invoked by johnston2019peleliu}
+}
+
+@article{shcherbina2013,
+  author  = {Shcherbina, Andrey Y. and D'Asaro, Eric A. and Lee, Craig M. and
+             Klymak, Jody M. and Molemaker, M. Jeroen and
+             McWilliams, James C.},
+  title   = {Statistics of vertical vorticity, divergence, and strain in a
+             developed submesoscale turbulence field},
+  journal = {Geophysical Research Letters},
+  year    = {2013},
+  volume  = {40},
+  number  = {17},
+  pages   = {4706--4711},
+  doi     = {10.1002/grl.50919},
+  note    = {First consistent sampling of the full horizontal velocity gradient
+             tensor at O(1 km).  Supplies the POPULATION of zeta, divergence and
+             strain against which Ro = -67 can be placed}
+}
+
+@article{lacasce2008,
+  author  = {LaCasce, J. H.},
+  title   = {Statistics from {Lagrangian} observations},
+  journal = {Progress in Oceanography},
+  year    = {2008},
+  volume  = {77},
+  number  = {1},
+  pages   = {1--29},
+  doi     = {10.1016/j.pocean.2008.02.002},
+  note    = {NOT USED -- this project measures kinematics, not dispersion, and
+             25.4 h of four drifters is far too short for dispersion
+             statistics.  Held for the cluster-scale-growth interpretation if
+             the record is ever extended}
+}
+
 @misc{cfconventions113,
   title  = {{NetCDF} {Climate} and {Forecast} ({CF}) Metadata Conventions,
             Version 1.13},

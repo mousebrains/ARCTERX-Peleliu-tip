@@ -137,6 +137,14 @@ vorticity implies.
 Radial velocity is 4 % of azimuthal, confirming a coherent, non-dispersing
 vortex and validating the fitted center.
 
+**Corroborated at this headland by a different instrument class.** Johnston et
+al. (2019) measured wake eddies at the Peleliu tip in 2016 from moored ADCPs
+and shipboard survey: ~1–2 km diameter, anticyclonic, shed every tidal cycle,
+with Rossby number "reaching 80 and 65" — same convention, ζ/f. Our −67 sits
+inside their range. Their scaling-based "Ro ~ 30" uses a one-sided shear rather
+than ζ, so their own numbers span a factor of two; the circulation/Stokes
+estimate here is the better-defined one.
+
 Three of the four drifters roughly **double their orbital radius** over the
 record (+111 %, +122 %, +178 %); mwb793d02 started near the core edge and
 stayed (−4 %). A slow outward spiral, consistent with the small persistent
@@ -222,6 +230,23 @@ forcing than one M2 half-cycle at the measured 0.64 m/s tip current supplies.
 Either flow past the tip exceeds the array-averaged value, or circulation
 accumulates over several cycles. The Thompson ADCP spot measurements could
 discriminate.
+
+*Evidence now favours the first horn, but does not settle it.* Johnston et al.
+(2019) report that flow "intensifies" at the south point as it is constrained
+around the topography, and that the velocity difference across the wake eddy
+**exceeds 1 m/s** — against our array-averaged 0.64 m/s, a factor ~1.6 on
+Γ ~ UL. They also give an intrinsic shedding timescale of ~6 h from a Strouhal
+scaling (St ~ 0.2, L = 2 km, U = 0.5 m/s), close enough to the 6.2 h M2
+half-cycle that they suggest the tide "may effectively generate eddies." A
+1.6× stronger tip flow over a comparable interval plausibly closes a 2–3× gap.
+**Still a hypothesis** — it rests on their numbers at their moorings, not ours,
+and the Thompson ADCP remains the discriminating measurement.
+
+Two dimensionless numbers from that paper are worth adopting and are not
+currently computed anywhere here: the island wake parameter
+Ref = H/(Cd L) ~ 100 (Wolanski et al. 1984), which places this flow in the
+vortex-street shedding regime, and the Strouhal number above. Both are cheap
+to evaluate from data already in `data/`.
 
 **Shedding direction.** C05 shows the *sign* of the along-axis flow is set by
 the subtidal current, with clean regimes in May 2023 (west 14–23, east 24–27).

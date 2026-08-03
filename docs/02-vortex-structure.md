@@ -239,6 +239,19 @@ pressure gradient and the Coriolis term is a 1.5 % correction. This is a
 submesoscale island wake, not a mesoscale eddy, and geostrophic intuition does
 not apply to it.
 
+**Independently corroborated at this headland.** Johnston et al. (2019)
+measured the same eddies at the Peleliu tip three years earlier, from moored
+ADCPs and shipboard survey rather than drifters, and report $Ro$ "reaching 80
+and 65" for ~1–2 km diameter anticyclonic wake eddies at the separation point.
+They use $Ro = \zeta/f$, the same convention as here. Our $-67$ falls inside
+that range — a different instrument class, the same headland, the same number.
+
+One caveat on the comparison: their quoted "$Ro \sim 30$" scaling divides a
+1 m s⁻¹ velocity *difference* by a 2 km diameter, which is a one-sided shear
+rather than $\zeta$, so their scaling and mooring numbers differ by about a
+factor of two among themselves. The circulation/Stokes estimate here is the
+better-defined quantity.
+
 **Convention warning.** A second definition of $Ro$ is in wide use — the
 *angular velocity* over $f$, i.e. $\omega/f = \zeta/2f$, **half** of the one
 above. Poulain et al. (2023) use it and say so in their Appendix ("inertial
@@ -254,7 +267,9 @@ $f + \zeta < 0$, which is the textbook signature of inertial instability. It is
 not unstable, and the reason is worth recording because the naive test gives
 the wrong answer.
 
-The correct criterion for a circular vortex keeps both factors:
+The correct criterion for a circular vortex keeps both factors — the
+generalised Rayleigh discriminant, i.e. Rayleigh's circulation theorem extended
+to a rotating frame (Kloosterziel and van Heijst 1991, §4):
 
 $$\Phi = (f + \zeta)\left(f + \frac{2v_\theta}{r}\right) > 0
 \quad \text{for stability}$$
@@ -278,6 +293,16 @@ $-2.08\times10^{-8}$ and the expression is imaginary — a **linearisation
 failure, not a physical instability**, as $\Phi > 0$ shows. Combined with an
 inertial period 3.9× longer than the entire 25.4 h record, "near-inertial" is
 not a usable category for this dataset.
+
+**What this does not establish.** $\Phi > 0$ rules out *inertial/centrifugal*
+instability only. Barotropic (shear) instability is a separate criterion, and
+Kloosterziel and van Heijst's central result is that the two senses behave
+differently — the **anticyclone is the fragile case**, showing "rather explosive
+instability behaviour" and splitting into dipoles, where the cyclone decays
+gradually into a tripole. Nothing here has tested our vortex against a
+shear-instability criterion. Its 25.4 h coherence ($OW < 0$ in 100 % of windows)
+is an **observation, not a prediction**, and the record ends while the vortex is
+still coherent — so we do not know how it died.
 
 ### Rotation period
 
@@ -321,6 +346,13 @@ Thompson ADCP spot measurements could discriminate.
 - Kunze, E. (1985). Near-inertial wave propagation in geostrophic shear.
   *J. Phys. Oceanogr.* **15**, 544–565 — the linearised $f_e$ that §2.6 shows
   does not apply here.
+- Kloosterziel, R. C. and G. J. F. van Heijst (1991). An experimental study of
+  unstable barotropic vortices in a rotating fluid. *J. Fluid Mech.* **223**,
+  1–24 — the modified Rayleigh criterion used in §2.6, and the caveat that
+  anticyclones are the fragile case under *shear* instability.
+- Johnston, T. M. S. *et al.* (2019). Energy and momentum lost to wake eddies
+  and lee waves ... at Peleliu, Palau. *Oceanography* **32**(4), 110–125 —
+  same headland, $Ro$ 65–80 from moorings (§2.6).
 - Poulain, P.-M. *et al.* (2023). Drifter observations of surface currents in
   the Cyprus Gyre. *Front. Mar. Sci.* **10**, 1266040 — independent statement
   of the Stokes area-average bias (§2.3), and the source of the $\omega/f$

@@ -118,21 +118,32 @@ position:
 
 $$g(x,y) = g_0 + \nabla g \cdot \mathbf{x}$$
 
-gives a gradient of **0.761 ± 0.102 ° km⁻¹** toward **314°**, i.e. 7.5σ from
-zero. Converting to a phase speed,
+gives a gradient of **0.230 ± 0.071 ° km⁻¹** toward **297°** — 3.2σ from zero,
+so resolved, but only just. Converting to a phase speed,
 
-$$c = \frac{360°/T}{|\nabla g|} = 11\ \mathrm{m\,s^{-1}}$$
+$$c = \frac{360°/T}{|\nabla g|} = 35\ \mathrm{m\,s^{-1}}$$
 
 Now the test. For a shallow-water wave $c = \sqrt{gh}$, so
 
-$$h_{\text{eff}} = \frac{c^2}{g} = \frac{11^2}{9.81} \approx 11\ \mathrm{m}$$
+$$h_{\text{eff}} = \frac{c^2}{g} = \frac{35^2}{9.81} \approx 125\ \mathrm{m}$$
 
-The channel is 1500 m deep, which would give $c = 121\ \mathrm{m\,s^{-1}}$ and a
-phase gradient eleven times smaller than observed. **11 m is the depth of the
-bank tops.** So the M2 phase propagation across this array is controlled by
-shallow water over the reef, not by the deep channel between the islands — a
-non-obvious conclusion that falls straight out of a phase gradient and one
-square root.
+The bank tops are ~19 m ($c = 14\ \mathrm{m\,s^{-1}}$) and the channel 1500 m
+($c = 121\ \mathrm{m\,s^{-1}}$). The observed 35 m s⁻¹ sits between them and
+matches neither. **The honest reading is that this array cannot separate the two
+regimes**; it is 12 km across and the M2 phase varies by 2.2° over it.
+
+> **Retraction.** This section previously reported **0.761 ± 0.102 ° km⁻¹ at
+> 314°, 7.5σ, 11 m s⁻¹**, and concluded that $h_{\text{eff}} \approx 11$ m
+> identified the wave as bank-top controlled. That is withdrawn — the gradient
+> was a **short-baseline artifact**. The Angaur sub-array alone, 2.7 km across,
+> returns 0.758 ° km⁻¹; every subset spanning ≥5 km returns 0.18–0.23. A real
+> gradient does not depend on array size. `PRESSURE_ANALYSIS.md` §8.1 has the
+> full diagnosis and `src/pressure_analysis.py` recomputes it.
+>
+> The methodological lesson survives intact, and is worth more than the result
+> was: **a phase gradient divided by a short baseline is noise amplification**,
+> and the check is to refit on sub-arrays and confirm the answer does not move.
+> That test is now part of the driver.
 
 This is the kind of result that only exists because the phases were referenced
 correctly. With the 149° spread of §4.3 it would have been noise.

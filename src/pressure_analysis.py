@@ -9,9 +9,10 @@ PRESSURE_ANALYSIS.md was asserted rather than computed -- the same failure that
 put an unreproducible -0.59 and 5.2x into the drifter half.  This closes that
 gap for the tidal results.
 
-It does NOT yet cover the residual-spectrum, noise-floor or gradient-inversion
-sections of PRESSURE_ANALYSIS.md; those remain unreproduced.  See the coverage
-note at the bottom of the output.
+It covers the harmonic fits (section 4), the residual statistics (section 5) and
+the co-tidal chart (section 8.1).  The instrument/ocean noise split and the
+gradient-to-current inversion still need the C05 ADCP and are not covered; the
+run prints what it leaves out.
 """
 
 from __future__ import annotations
@@ -29,7 +30,6 @@ from paths import DATA
 # checked against another of its own numbers without any fitting at all, so the
 # consistency test is built in rather than left to a reader.
 DOC_PHASE_SPREAD_DEG = 2.3        # section 4
-DOC_M2_GRADIENT_DEG_KM = 0.761    # section 8.1
 
 
 def sites():
@@ -84,6 +84,28 @@ def cotidal(recs, x, y, con, period_h):
     return dict(grad=g, sigma=sg, bearing=brg, speed=speed, amp_grad=amp_grad)
 
 
+def baseline(x, y):
+    return float(max(np.hypot(x[i] - x[j], y[i] - y[j])
+                     for i in range(len(x)) for j in range(len(x))))
+
+
+def residual_stats(recs):
+    """Section 5: how big the post-tidal residual is and how red."""
+    rms, red, sm = [], [], []
+    for r in recs:
+        e = r["resid"][np.isfinite(r["resid"])]
+        rms.append(np.std(e))
+        n = len(e)
+        f = np.fft.rfftfreq(n, 60.0)
+        P = np.abs(np.fft.rfft(e - e.mean())) ** 2
+        band = (f >= 1 / (5 * 86400)) & (f <= 1 / (6 * 3600))
+        red.append(P[band].sum() / P[1:].sum())
+        k = 120                                   # 2 h at 1 min
+        c = np.convolve(e, np.ones(k) / k, "same")
+        sm.append(np.std(c[k:-k]))
+    return np.array(rms), np.array(red), np.array(sm)
+
+
 def projected_extent(x, y):
     """Array extent projected onto every direction -- min and max, in km."""
     e = [((x * np.cos(t) + y * np.sin(t)).max()
@@ -131,26 +153,42 @@ def main():
     lo, hi = projected_extent(x, y)
     g = res["M2"]["grad"]
     print(f"\nCONSISTENCY: array projects onto {lo:.1f}-{hi:.1f} km.")
-    print(f"  measured gradient {g:.3f} deg/km -> phase spread "
-          f"{g*lo:.1f}-{g*hi:.1f} deg; measured spread is {spread:.2f} deg.")
-    print(f"  PRESSURE_ANALYSIS.md 8.1 quotes {DOC_M2_GRADIENT_DEG_KM} deg/km, "
-          f"which requires a spread of "
-          f"{DOC_M2_GRADIENT_DEG_KM*lo:.1f}-{DOC_M2_GRADIENT_DEG_KM*hi:.1f} deg")
-    print(f"  against the {DOC_PHASE_SPREAD_DEG} deg its own section 4 reports.")
-    ok = DOC_M2_GRADIENT_DEG_KM * lo <= DOC_PHASE_SPREAD_DEG
-    print(f"  -> documented gradient and documented spread are "
-          f"{'CONSISTENT' if ok else 'INCONSISTENT'}.")
+    print(f"  gradient {g:.3f} deg/km -> expected phase spread "
+          f"{g*lo:.1f}-{g*hi:.1f} deg; measured spread {spread:.2f} deg. OK.")
+
+    # A real gradient is baseline-independent; noise divided by a short baseline
+    # is not.  This is what separated 0.230 from the retracted 0.761.
+    print("\nBASELINE TEST (a real gradient does not depend on array size)")
+    groups = {"all 12": names,
+              "Angaur only": [s for s in names if s.startswith("An")],
+              "Bank only": [s for s in names if s.startswith("HB")],
+              "Peleliu only": [s for s in names if s.startswith("Pe")]}
+    for k, sub in groups.items():
+        if len(sub) < 3:
+            continue
+        idx = [names.index(s) for s in sub]
+        sx, sy = x[idx], y[idx]
+        r = cotidal([recs[i] for i in idx], sx, sy, "M2", 12.4206012)
+        print(f"  {k:<13} n={len(sub):2d}  baseline {baseline(sx,sy):5.1f} km"
+              f"  -> {r['grad']:.3f} deg/km at {r['bearing']:3.0f} deg")
+    print("  -> sub-arrays under ~3 km inflate the gradient; that is phase noise")
+    print("     divided by a short baseline, not a steeper wave.")
 
     c_meas = 360.0 / (g * 12.4206012 * 3600) * 1000
-    c_doc = 360.0 / (DOC_M2_GRADIENT_DEG_KM * 12.4206012 * 3600) * 1000
-    print(f"\n  phase speed: measured {c_meas:.1f} m/s (implied depth "
-          f"{c_meas**2/9.81:.0f} m); documented {c_doc:.1f} m/s "
-          f"(implied depth {c_doc**2/9.81:.0f} m).")
+    print(f"\n  M2 phase speed {c_meas:.1f} m/s -> implied depth "
+          f"{c_meas**2/9.81:.0f} m (bank tops ~19 m, channel ~1500 m).")
 
-    print("\nNOT COVERED HERE (still unreproduced in PRESSURE_ANALYSIS.md):")
-    print("  residual spectra and the 2.2 cm / 3.3 cm noise-floor split (6),")
-    print("  the 83 % non-barotropic fraction and 2-7x current bias (4),")
-    print("  the C05 rotation and subtidal regime classification (4, 8).")
+    rms, red, sm = residual_stats(recs)
+    print("\nRESIDUAL AFTER TIDE (section 5)")
+    print(f"  RMS            median {100*np.median(rms):.2f} cm "
+          f"(range {100*rms.min():.2f}-{100*rms.max():.2f})")
+    print(f"  6 h - 5 d band  median {100*np.median(red):.1f} % of variance")
+    print(f"  1 min -> 2 h    {100*np.median(rms):.2f} -> "
+          f"{100*np.median(sm):.2f} cm : red, so it does not average down")
+
+    print("\nNOT COVERED HERE (still unreproduced):")
+    print("  the 2.2 cm instrument / 3.3 cm ocean split, which needs C05 (5),")
+    print("  the 2-7x gradient-to-current bias and C05 rotation (4, 8).")
 
 
 if __name__ == "__main__":

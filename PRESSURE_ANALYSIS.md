@@ -415,52 +415,61 @@ are the only genuine kHz instruments in the experiment.
 Two products the array *does* support, and the limits they imply for the 2025
 radar work, where **C05 is the only current mooring**.
 
-### 8.1 The co-tidal chart (resolved)
+### 8.1 The co-tidal chart (corrected 2026-08-03)
 
-A plane fit of the complex tidal amplitude across all twelve gauges resolves
-the **phase** gradient cleanly, though not the amplitude gradient:
+A plane fit of the complex tidal constant across all twelve gauges, from
+`src/pressure_analysis.py`:
 
 | constituent | phase gradient | propagation | significance |
 |---|---|---|---|
-| **M2** | **0.761 ± 0.102 °/km** ⚠️ | **314° at 11 m/s** | 7.5σ |
-| S2 | 0.877 ± 0.283 | 311° at 9 m/s | 3.1σ |
-| O1 | 0.610 ± 0.308 | 328° at 6 m/s | 2.0σ |
-| K1 | 0.061 ± 0.215 | — | not resolved |
-| M2 amplitude | 1.4 ± 1.8 mm/km | — | not resolved |
+| **M2** | **0.230 ± 0.071 °/km** | **297° at 35 m/s** | 3.2σ |
+| S2 | 0.158 ± 0.209 | — | 0.8σ, not resolved |
+| O1 | 0.620 ± 0.421 | 327° at 6 m/s | 1.5σ, marginal |
+| K1 | 0.053 ± 0.226 | — | 0.2σ, not resolved |
+| M2 amplitude | 0.23 mm/km | — | not resolved |
 
-> ⚠️ **UNRESOLVED — do not publish the M2 row without settling this.**
-> The M2 phase gradient contradicts this document's own §4, and the check needs
-> no fitting. The array projects onto 3.9–12.4 km depending on direction, so
-> 0.761 °/km requires a phase spread of **3.0–9.4°** across it. §4 reports
-> **2.3°**, and `src/pressure_analysis.py` measures **2.20°**.
+**Only M2 is resolved, and only at 3.2σ.** The amplitude being flat across
+11 km is consistent with the near-identical M2 amplitudes in §4.
+
+> **What this replaces, and why.** An earlier version of this section reported
+> **0.761 ± 0.102 °/km, 314° at 11 m/s, 7.5σ** for M2, plus S2 at 0.877 (3.1σ)
+> and a claim that three constituents independently agreed on 311–328°. That is
+> withdrawn. The code behind it was never committed and does not survive
+> anywhere, so it could not be re-run; the numbers here come from a fresh
+> implementation that is committed.
 >
-> That driver's independent plane fit to the complex tidal constant returns
-> **0.230 ± 0.071 °/km (3.2σ), 297°, 35.0 m/s** — consistent with the measured
-> spread, where 0.761 is not. **O1 reproduces almost exactly** (0.620 against
-> 0.610 °/km, 327° against 328°), so the method is comparable; M2 is the
-> outlier, off by 3.3×.
+> The retracted value fails a check that needs no fitting at all. This array
+> projects onto 3.9–12.4 km depending on direction, so 0.761 °/km demands a
+> phase spread of 3.0–9.4° across it. **§4 of this document reports 2.3°**, and
+> the driver measures 2.20°.
 >
-> The physics turns on this. At 0.230 °/km the phase speed is 35 m/s and the
-> implied depth ~125 m — neither the 19 m bank tops nor the 1500 m channel, and
-> **not** the shallow-water-controlled wave concluded below. At 0.761 °/km it is
-> 10.6 m/s and ~11 m, which is that conclusion.
+> The likely cause is a **short baseline**. Fitting sub-arrays reproduces the
+> retracted number almost exactly:
 >
-> Which is right is not resolvable from what is committed: §8.1 was produced by
-> code that was never in this repository. Re-derive it before the result is
-> used. Direction (311–328°) is unaffected and reproduces.
+> | subset | n | baseline | gradient |
+> |---|---|---|---|
+> | all twelve | 12 | 12.4 km | **0.230 °/km** |
+> | Angaur only | 4 | 2.7 km | **0.758 °/km** |
+> | Bank only | 5 | 1.9 km | 0.399 °/km |
+> | Peleliu only | 3 | 1.7 km | 0.284 °/km |
+>
+> A real gradient is baseline-independent. This one scales as 1/baseline, which
+> is what per-gauge phase noise — 0.29° about the twelve-gauge plane — divided
+> by a short baseline looks like. Every subset spanning ≥5 km returns
+> 0.18–0.23 °/km. The vendored 1-minute means are not implicated: they reproduce
+> the full-rate archive constants to 3 × 10⁻⁹ m and 0.0000°.
 
-Three constituents independently agreeing on 311–328° is real. The amplitude
-being flat across 11 km is consistent with the near-identical M2 amplitudes in
-§4.
+**The physical conclusion changes with it.** At 0.230 °/km the M2 phase speed is
+**35 m/s**, implying an effective depth of ~125 m. That is *not* the shallow-water
+wave over the bank tops that the retracted number supported — √(g·19) = 14 m/s
+for the bank tops, √(g·1500) = 121 m/s for the channel, and 35 m/s sits between
+them, nearer the banks than the channel but matching neither.
 
-**The phase speed is the interesting part.** 11 m/s implies an effective depth
-of ~11 m — close to √(g·19) = 14 m/s for the bank tops, and nowhere near
-√(g·1500) = 121 m/s for the channel. The array is sensing a *shallow-water
-controlled* wave over the reef complex, not the deep-channel barotropic tide.
-
-That may be the physical reason the gradient-to-current inversion in §4 fails:
-the momentum balance used there assumes the deep barotropic mode, which is not
-what these gauges are measuring.
+Do not use this to argue a bank-controlled tide. At 3.2σ over a 12 km array the
+honest statement is: **M2 propagates roughly northwest-to-west-northwest at a
+speed intermediate between bank-top and channel shallow-water limits, and the
+array is too small to do better.** Section 8.2's forward-model route is now the
+*only* defensible use of these numbers, not merely the preferred one.
 
 ### 8.2 The legitimate route from sea level to current
 

@@ -62,9 +62,10 @@ contour estimator and 0.1–0.2 % by the other two. The vortex is **not solid-bo
 with radius, core radius ~1.1–1.2 km.
 
 **The array.** Tides resolved to 99 % of variance, M2 = 0.502 ± 0.004 m across
-all twelve gauges with a 2.3° phase spread over 11 km. A co-tidal chart
-showing M2 propagating 314° at 11 m/s — a shallow-water speed set by the bank
-tops, not the 1500 m channel.
+all twelve gauges with a 2.3° phase spread over 11 km. A co-tidal chart showing
+M2 propagating **297° at 35 m/s**, resolved at only 3.2σ — a speed between the
+bank-top and channel shallow-water limits, matching neither. An earlier
+**314° at 11 m/s** is withdrawn; see `PRESSURE_ANALYSIS.md` §8.1.
 
 **Two things that do not work**, established with numbers so nobody repeats
 them: drifter GPS height cannot measure sea level (off by ~100×), and bottom

@@ -84,6 +84,45 @@ constellation turned 6.86 revolutions where the *core* vorticity predicts 8.95,
 because the outer drifters orbit more slowly than the core vorticity implies.
 Two independent diagnostics, one conclusion.
 
+### Corroboration from an unrelated vortex
+
+Poulain et al. (2023) hit the same bias in the Cyprus Gyre and state it
+plainly: the drifter estimate "is an overestimate because the vorticity, in
+absolute value, always decreases with increasing distance from the gyre
+center," and the solid-body inversion holds "only ... for a small radius less
+than 10–20 km." Same conclusion, a vortex four orders of magnitude away in
+Rossby number and two in size — so this is a property of the *estimator*, not
+of Palau.
+
+Their wording and ours point in opposite directions, which is worth being
+careful about. Both say the same thing. The Stokes average over a disc of
+radius $r$,
+
+$$\bar{\zeta}(r) = \frac{\Gamma(r)}{\pi r^2} = 2\omega(r)$$
+
+lies between $\zeta(0)$ and $\zeta(r)$ whenever $|\zeta|$ decreases outward.
+So it **over**estimates the local vorticity at the orbit (Poulain's framing)
+and **under**estimates the core (ours). One inequality, read from two ends.
+
+The cost is quantified here. Inverting the *observed* constellation rotation
+under a solid-body assumption:
+
+$$P_{\text{obs}} = \frac{25.4\ \mathrm{h}}{6.86\ \mathrm{rev}} = 3.70\ \mathrm{h}
+\quad\Longrightarrow\quad
+\zeta = \frac{4\pi}{P_{\text{obs}}} = 9.4\times10^{-4}\ \mathrm{s^{-1}}$$
+
+against $1.19\times10^{-3}\ \mathrm{s^{-1}}$ from four-drifter circulation —
+**21 % low**, matching the 23 % shortfall in §1.8. Neither number is wrong;
+they average over different radii, because the orbital loop is larger than the
+instantaneous cluster polygon. Both sit on the profile above: $1.19\times10^{-3}$
+near the ~640 m median cluster scale, $9.4\times10^{-4}$ out past ~1 km.
+
+**The practical consequence.** Any method that recovers $\zeta$ from a *single*
+trajectory — wavelet ridge, rotary Fourier, complex demodulation — can only
+reach it through $\zeta = 4\pi/P$, and so inherits this 21 %. That is the
+reason the four-drifter circulation estimate is primary and no single-drifter
+spectral method was adopted; see entry 7 of `papers/README.md`.
+
 ## 2.4 Finding the center
 
 In a frame moving with the eddy at velocity $\mathbf{c}$, the center is where
@@ -200,6 +239,46 @@ pressure gradient and the Coriolis term is a 1.5 % correction. This is a
 submesoscale island wake, not a mesoscale eddy, and geostrophic intuition does
 not apply to it.
 
+**Convention warning.** A second definition of $Ro$ is in wide use — the
+*angular velocity* over $f$, i.e. $\omega/f = \zeta/2f$, **half** of the one
+above. Poulain et al. (2023) use it and say so in their Appendix ("inertial
+motions have an angular velocity of $f$, a vorticity of $2f$ ... and a Rossby
+number ... equal to 1"). Their Cyprus Gyre core, quoted as "$Ro \sim 0.25$,
+mean vorticity $0.5f$", is $Ro = 0.5$ here. Halve ours or double theirs before
+any comparison; the factor of two is silent and neither paper is wrong.
+
+### Is it inertially stable?
+
+A reasonable worry at $Ro = -67$: an anticyclone with $|\zeta| \gg f$ has
+$f + \zeta < 0$, which is the textbook signature of inertial instability. It is
+not unstable, and the reason is worth recording because the naive test gives
+the wrong answer.
+
+The correct criterion for a circular vortex keeps both factors:
+
+$$\Phi = (f + \zeta)\left(f + \frac{2v_\theta}{r}\right) > 0
+\quad \text{for stability}$$
+
+For an anticyclone $\zeta$ and $v_\theta/r$ are both negative, so the two
+factors flip sign **together** and the product stays positive. With
+$\omega = v_\theta/r = -4.72\times10^{-4}\ \mathrm{s^{-1}}$ from the observed
+3.70 h orbit,
+
+$$\Phi = (-1.17\times10^{-3})(-9.26\times10^{-4}) = +1.09\times10^{-6} > 0$$
+
+Stable. The associated frequency $\sqrt{\Phi} = 1.04\times10^{-3}\ \mathrm{s^{-1}}$
+corresponds to a period of **1.68 h** — set almost entirely by the vortex, and
+59× faster than the 98.3 h local inertial period.
+
+This is also why the near-inertial machinery in the drifter literature does not
+transfer here. The linearised effective frequency
+$f_e = \sqrt{f^2 + f\zeta} \approx f + \zeta/2$ (Kunze 1985; Poulain et al.
+2023 Eq. 1) assumes $|\zeta|/f \ll 1$. At $|\zeta|/f = 67$ the radicand is
+$-2.08\times10^{-8}$ and the expression is imaginary — a **linearisation
+failure, not a physical instability**, as $\Phi > 0$ shows. Combined with an
+inertial period 3.9× longer than the entire 25.4 h record, "near-inertial" is
+not a usable category for this dataset.
+
 ### Rotation period
 
 Treating the core as solid-body with $\zeta = 2\omega$,
@@ -239,5 +318,12 @@ Thompson ADCP spot measurements could discriminate.
 - Saffman, P. G. (1992). *Vortex Dynamics*. Cambridge University Press.
 - Holton, J. R. and G. J. Hakim (2013). *An Introduction to Dynamic
   Meteorology*, 5th ed. — gradient-wind balance, §3.2.5.
+- Kunze, E. (1985). Near-inertial wave propagation in geostrophic shear.
+  *J. Phys. Oceanogr.* **15**, 544–565 — the linearised $f_e$ that §2.6 shows
+  does not apply here.
+- Poulain, P.-M. *et al.* (2023). Drifter observations of surface currents in
+  the Cyprus Gyre. *Front. Mar. Sci.* **10**, 1266040 — independent statement
+  of the Stokes area-average bias (§2.3), and the source of the $\omega/f$
+  Rossby convention (§2.6).
 
 Full citations with DOIs in `papers/README.md`.

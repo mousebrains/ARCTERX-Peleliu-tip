@@ -17,11 +17,15 @@ implements it**.
 | 4 | Weiss 1991 | ✓ `Weiss1991_PhysicaD_enstrophy_transfer.pdf` | title page |
 | 5 | Efron & Gong 1983 | ✓ `EfronGong1983_AmStat_bootstrap_jackknife.pdf` | title page (JSTOR cover) |
 | 6 | Saffman 1992 | ⏳ expected | **not yet verified** |
+| 7 | Poulain et al. 2023 | ✓ `Poulain2023_FrontMarSci_cyprus_gyre_wavelet_ridge.pdf` | title page |
 
-All five journal articles are held locally and every volume/issue/page figure
+All six journal articles are held locally and every volume/issue/page figure
 below was read off the article's own title page — not from a publisher web
 record. Saffman (1992) is a book and is still outstanding; its details remain
 unverified until the copy arrives.
+
+Entries **1–5** are implemented. Entry **7** is consulted but deliberately
+**not** implemented — see the entry for the arithmetic behind that decision.
 
 `./fetch_papers.sh --list` reports what is missing at any time.
 
@@ -175,6 +179,96 @@ section for the Lamb–Oseen profile so the reference points somewhere useful.
 
 **Implements:** `fit_oseen()` / `fitOseen()`.
 
+### 7. Poulain et al. (2023) — wavelet ridge analysis, *evaluated and not adopted*
+
+> Poulain, P.-M., M. Menna, E. Mauri, A. Pirro, D. R. Hayes, and H. Gildor,
+> 2023: Drifter observations of surface currents in the Cyprus Gyre.
+> *Frontiers in Marine Science* **10**, 1266040.
+> doi:[10.3389/fmars.2023.1266040](https://doi.org/10.3389/fmars.2023.1266040)
+> — received 24 Jul 2023, accepted 11 Oct 2023, published 27 Oct 2023.
+> Open access, CC BY. Author names are given as initials because that is how
+> the title page prints them; do not expand them without a source.
+
+Wavelet ridge analysis (Lilly & Gascard 2006; jLab v1.7.1) applied to SVP
+drifters trapped in the Cyprus Gyre, separating the gyre rotation from
+near-inertial oscillations. Structurally the closest published analysis to
+ours — anticyclonic vortex, drifters as the only in-situ instrument,
+vorticity from Stokes' theorem — which is why it was read carefully and why
+the negative verdict is recorded here rather than left implicit.
+
+**The method is not adopted.** Wavelet ridges buy one thing over Fourier:
+time-resolved instantaneous frequency and amplitude. Poulain needs that — 2–6
+month records, gyre period wandering 4→11 days, NIO amplitude intermittent
+between 0 and 39 cm/s. Our 25.4 h record cannot use it:
+
+| | Poulain | here |
+|---|---|---|
+| record | 168 d (drifter 3469260) | 25.4 h |
+| cycles at the vortex frequency | 15–42 | **6.86** |
+| usable after edge trim (γ=3, β=4 Morse, footprint ≈ P/π = 1.1 cycles per end) | ~13–40 | **~4.6** |
+| second band to separate | NIO at ~1 d | none resolvable |
+
+At ~4.6 usable cycles any frequency drift a ridge reports falls inside the
+wavelet's own bandwidth — that Morse wavelet has ~70 % relative frequency
+resolution (their Appendix: 0.7 cpd at 1 cpd). Rotary Fourier or complex
+demodulation at the known 3.7 h frequency is cheaper and better conditioned.
+Note also that the feature which would fix the ±90° sign degeneracy in
+`explore_drifter_paths.m` is the **rotary** decomposition, not the wavelet;
+rotary Fourier spectra supply it, and Poulain use them in their Fig. 8.
+
+**The near-inertial half is inapplicable, not merely marginal.** At 6.99 °N,
+f = 1.78 × 10⁻⁵ s⁻¹ and the inertial period is **98.3 h** — the 25.4 h record
+spans 0.26 of one cycle. Their Eq. (1) is also undefined on our numbers:
+
+```
+fe = sqrt(f^2 + f*zeta)     requires zeta >= -f
+zeta = -1.19e-3 = -67 f     f^2 + f*zeta = -2.08e-8  ->  imaginary
+```
+
+This is a linearisation failure, **not** an instability. Eq. (1) assumes
+|ζ|/f ≪ 1; ours is 67. The unlinearised criterion keeps both factors
+negative, so the vortex is inertially stable:
+
+```
+(f + zeta)(f + 2V/r) = (-1.17e-3)(-9.26e-4) = +1.09e-6 > 0
+effective frequency = 1.04e-3 s^-1  ->  period 1.68 h
+```
+
+That effective period is set by the vortex, not by f — 59× faster than the
+local inertial period. "Near-inertial" is not a meaningful category here, so
+§3.3, §3.4, Table 2 and the damped slab model have no counterpart in this
+analysis.
+
+**What it is good for anyway — three things:**
+
+1. **Independent confirmation of our Stokes-theorem trap.** They write that
+   the drifter estimate "is an overestimate because the vorticity, in absolute
+   value, always decreases with increasing distance from the gyre center," and
+   that solid-body inversion holds "only ... for a small radius." That is
+   exactly `DRIFTER_ANALYSIS.md` §5 *"each ζ is an area average"*, arrived at
+   independently. Our numbers: the observed −6.86 rev in 25.4 h gives
+   P = 3.70 h, so the solid-body inversion ζ = 4π/P returns
+   9.4 × 10⁻⁴ s⁻¹ against 1.19 × 10⁻³ s⁻¹ from four-drifter circulation —
+   **21 % low**, consistent with the 23 % shortfall in §4.
+2. **The orbital-speed-versus-radius presentation** (their Figs. 7 and 13,
+   with constant-angular-velocity reference lines at f, f/4, f/10, f/20) is
+   the same diagnostic as our radial profile and Lamb–Oseen fit, and is a
+   clearer way to show departure from solid body than a fitted curve alone.
+3. **A convention trap, if their numbers are ever quoted alongside ours.**
+   Poulain define the Rossby number as *angular velocity* over f (Appendix:
+   "inertial motions have an angular velocity of f, a vorticity of 2f ...
+   and a Rossby number ... equal to 1"), i.e. ζ/2f. This project uses ζ/f.
+   Their gyre core at "Ro ~ 0.25, mean vorticity 0.5 f" is Ro = 0.5 in our
+   convention. **Factor of two — halve ours, or double theirs, before
+   comparing.**
+
+For scale: their gyre is Ro ≈ 0.5 (our convention) at ~15–30 km radius;
+ours is Ro = −67 at ~1.2 km. Same qualitative object, four orders of
+magnitude apart in Rossby number and two in size.
+
+**Implements:** nothing. Consulted, evaluated, method declined; cited for the
+Stokes-overestimate confirmation and the convention warning.
+
 ---
 
 ## Non-journal sources
@@ -211,6 +305,7 @@ MolinariKirwan1975_JPO_differential_kinematics.pdf   J Phys Oceanogr 5, 483-491
 Okubo1970_DSR_velocity_singularities.pdf             Deep-Sea Res 17, 445-454
 Weiss1991_PhysicaD_enstrophy_transfer.pdf            Physica D 48, 273-294
 EfronGong1983_AmStat_bootstrap_jackknife.pdf         Am Statistician 37(1), 36-48
+Poulain2023_FrontMarSci_cyprus_gyre_wavelet_ridge.pdf  Front Mar Sci 10, 1266040
 ```
 
 Naming convention: `Author####_Journal_short-title.pdf`.
@@ -222,6 +317,19 @@ Naming convention: `Author####_Journal_short-title.pdf`.
   as unverified and is now confirmed (*Am. Statistician* **37**(1), Feb 1983,
   pp. 36–48).
 - Entry **6** (Saffman) is **not yet verified** — the copy is outstanding.
+- Entry **7** (Poulain et al.): volume, article number, DOI and the
+  received/accepted/published dates were read off the article's own first
+  page. Author names are recorded as the initials printed there.
 - The Weiss PDF is a copy posted publicly by a UCSD course; cite the Physica D
   version of record.
 - No paywall was circumvented in assembling this directory.
+
+## A note on redistribution
+
+`.gitignore` excludes `*.pdf` and `LICENSE-DATA` states that journal articles
+here are not redistributed. **Entry 7 is the one exception in principle** —
+Poulain et al. (2023) is Frontiers open access under CC BY, so it *may* be
+redistributed with attribution. It is still excluded, because the blanket rule
+is simpler to keep correct than a per-file exception. If you want it committed,
+change `.gitignore` and the `papers/*.pdf` clause in `LICENSE-DATA` together —
+that clause is an outward-facing licence claim and must not go stale.

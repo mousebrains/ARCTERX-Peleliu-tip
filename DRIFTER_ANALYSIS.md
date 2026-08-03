@@ -161,6 +161,23 @@ moment. Because the vortex is not solid-body, part of the apparent time
 variation is the cluster sampling different radii, not the vortex changing.
 The radial profile separates them.
 
+Poulain et al. (2023) hit the identical bias in the Cyprus Gyre — a vortex
+four orders of magnitude away in Rossby number — and say the drifter estimate
+"is an overestimate because the vorticity, in absolute value, always decreases
+with increasing distance from the gyre center." It is a property of the
+estimator, not of Palau. The cost here: inverting the observed constellation
+rotation (−6.86 rev / 25.4 h → 3.70 h) under a solid-body assumption gives
+ζ = 4π/P = 9.4 × 10⁻⁴ s⁻¹ against 1.19 × 10⁻³ from four-drifter circulation,
+**21 % low** — the §4 shortfall again. Neither is wrong; they average over
+different radii. `docs/02-vortex-structure.md` §2.3 works it through.
+
+**Single-trajectory methods inherit that 21 %.** Wavelet ridge analysis,
+rotary Fourier and complex demodulation all reach ζ only through ζ = 4π/P, so
+none of them can beat the four-drifter circulation estimate on this dataset —
+and at 6.9 orbital cycles the record is too short for the one thing wavelets
+buy over Fourier. Evaluated and declined; `papers/README.md` entry 7 has the
+arithmetic.
+
 **Gate on polygon shape.** Leave-one-out triangles can go near-collinear, and
 Γ/A then diverges — spikes to ζ = 0.27 s⁻¹ (Rossby 15,000) before gating on
 the isoperimetric quotient 4πA/P².

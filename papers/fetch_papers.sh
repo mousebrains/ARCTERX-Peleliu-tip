@@ -22,6 +22,8 @@ ENTRIES=(
 "MolinariKirwan1975_JPO_differential_kinematics.pdf|https://doi.org/10.1175/1520-0485(1975)005<0483:CODKPF>2.0.CO;2|Molinari & Kirwan 1975, J Phys Oceanogr 5(3), 483-491"
 "Okubo1970_DSR_velocity_singularities.pdf|https://doi.org/10.1016/0011-7471(70)90059-8|Okubo 1970, Deep-Sea Res 17(3), 445-454"
 "EfronGong1983_AmStat_bootstrap_jackknife.pdf|https://doi.org/10.1080/00031305.1983.10483087|Efron & Gong 1983, Am Statistician 37(1), 36-48"
+# Open access (CC BY); this one should fetch from anywhere, no subscription.
+"Poulain2023_FrontMarSci_cyprus_gyre_wavelet_ridge.pdf|https://www.frontiersin.org/articles/10.3389/fmars.2023.1266040/pdf|Poulain et al. 2023, Front Mar Sci 10, 1266040"
 )
 
 missing=0

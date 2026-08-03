@@ -42,6 +42,12 @@ Sign convention: $\zeta > 0$ is counterclockwise (cyclonic in the northern
 hemisphere). The Peleliu vortex is **anticyclonic**, so every vorticity in
 this project is negative. Keep the sign; it is physics, not bookkeeping.
 
+**$Ro$ is defined two ways in the literature** and this project uses only the
+first: $\zeta/f$ here, versus angular velocity over $f$ — $\omega/f = \zeta/2f$
+— used by, among others, Poulain et al. (2023). Theirs is half of ours. Convert
+before comparing any published Rossby number with one from this repository.
+See §2.6.
+
 ## A warning about reading the code
 
 Several results in this project were wrong at some point, and the wrong

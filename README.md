@@ -3,9 +3,15 @@
 Analysis of an island-wake eddy shed from the Peleliu tip (Palau), from four
 GPS wave-buoy drifters and a twelve-gauge bottom-pressure array.
 
-**The repository is self-contained.** Clone it, install four Python packages,
-and every result in the two analysis documents reproduces with no external
-data volume mounted.
+**The repository is self-contained** in its data: clone it, install four Python
+packages, and the analyses run with no external volume mounted.
+
+**Reproduction is not yet complete, and one number is contested.** The drifter
+half of `DRIFTER_ANALYSIS.md` reproduces end to end. The tidal results in
+`PRESSURE_ANALYSIS.md` reproduce via `src/pressure_analysis.py`; its residual
+spectra, noise-floor split and gradient-inversion sections do not yet have a
+driver. That script also reports a **contradiction in the published M2 phase
+gradient** — see the flag in `PRESSURE_ANALYSIS.md` §8.1.
 
 ---
 
@@ -26,6 +32,9 @@ python3 tests/test_mwb_nc.py data/drifters/mwb458d02_gps_timeseries.nc data/raw_
 
 # 4. null tests: does the pipeline recover a vortex whose answer we know?
 python3 tests/test_synthetic_recovery.py
+
+# 5. the tidal half: harmonic fits, co-tidal chart, consistency check
+python3 src/pressure_analysis.py
 ```
 
 `tests/test_mwb_dat.py` additionally checks the parser against the
@@ -82,6 +91,7 @@ figures/      a handful that explain something; the rest are regenerable
 | `mwb_dat.py` | decodes the raw 85-byte instrument records |
 | `mwb_nc.py` | writes CF-1.13 netCDF from them; recovers ~38 % more data than delivered |
 | `pressure_array.py` | loads the pressure gauges, harmonic analysis |
+| `pressure_analysis.py` | driver — regenerates the tidal numbers and checks them |
 | `eddy_kinematics.py` | vorticity, divergence, strain; three cross-checked estimators |
 | `eddy_analysis.py` | driver — runs the analysis and writes figures |
 | `paths.py` | resolves the vendored subset vs the full archive |

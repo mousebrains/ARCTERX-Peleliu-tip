@@ -422,11 +422,32 @@ the **phase** gradient cleanly, though not the amplitude gradient:
 
 | constituent | phase gradient | propagation | significance |
 |---|---|---|---|
-| **M2** | **0.761 ± 0.102 °/km** | **314° at 11 m/s** | 7.5σ |
+| **M2** | **0.761 ± 0.102 °/km** ⚠️ | **314° at 11 m/s** | 7.5σ |
 | S2 | 0.877 ± 0.283 | 311° at 9 m/s | 3.1σ |
 | O1 | 0.610 ± 0.308 | 328° at 6 m/s | 2.0σ |
 | K1 | 0.061 ± 0.215 | — | not resolved |
 | M2 amplitude | 1.4 ± 1.8 mm/km | — | not resolved |
+
+> ⚠️ **UNRESOLVED — do not publish the M2 row without settling this.**
+> The M2 phase gradient contradicts this document's own §4, and the check needs
+> no fitting. The array projects onto 3.9–12.4 km depending on direction, so
+> 0.761 °/km requires a phase spread of **3.0–9.4°** across it. §4 reports
+> **2.3°**, and `src/pressure_analysis.py` measures **2.20°**.
+>
+> That driver's independent plane fit to the complex tidal constant returns
+> **0.230 ± 0.071 °/km (3.2σ), 297°, 35.0 m/s** — consistent with the measured
+> spread, where 0.761 is not. **O1 reproduces almost exactly** (0.620 against
+> 0.610 °/km, 327° against 328°), so the method is comparable; M2 is the
+> outlier, off by 3.3×.
+>
+> The physics turns on this. At 0.230 °/km the phase speed is 35 m/s and the
+> implied depth ~125 m — neither the 19 m bank tops nor the 1500 m channel, and
+> **not** the shallow-water-controlled wave concluded below. At 0.761 °/km it is
+> 10.6 m/s and ~11 m, which is that conclusion.
+>
+> Which is right is not resolvable from what is committed: §8.1 was produced by
+> code that was never in this repository. Re-derive it before the result is
+> used. Direction (311–328°) is unaffected and reproduces.
 
 Three constituents independently agreeing on 311–328° is real. The amplitude
 being flat across 11 km is consistent with the near-identical M2 amplitudes in

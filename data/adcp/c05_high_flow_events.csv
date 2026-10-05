@@ -1,5 +1,5 @@
-"# C05 depth-averaged current, WAMOS absolute rotation exp(-i*14.4deg) applied"
-"# along principal axis 113.4/293.4 deg true; +=toward 113, -=toward 293"
+"# C05 depth-averaged current, absolute rotation exp(-i*19.5deg) applied (corrected 2026-10-05 from 14.4; events and labels unchanged)"
+"# along principal axis 118.5/298.5 deg true; +=toward 118.5, -=toward 298.5"
 start_utc,end_utc,duration_h,peak_along_cm_s,direction
 2022-12-05T16:24:00,2022-12-05T18:00:00,1.60,-104.5,WEST
 2022-12-07T16:24:00,2022-12-07T19:47:59,3.40,-98.9,WEST

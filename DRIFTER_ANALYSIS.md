@@ -303,32 +303,48 @@ removes. See `PRESSURE_ANALYSIS.md` §6.
 
 ## 7. Open work
 
-**Circulation budget.** Γ = −5400 to −6100 m² s⁻¹ needs roughly 2–3× more
-forcing than one M2 half-cycle at the measured 0.64 m/s tip current supplies.
-Either flow past the tip exceeds the array-averaged value, or circulation
-accumulates over several cycles. The Thompson ADCP spot measurements could
-discriminate.
+**Circulation budget — resolved by the Thompson ADCP (2026-10-05).**
 
-*Both horns now have supporting evidence, and they are not exclusive.*
+*Reversal.* This section previously said Γ needs roughly 2–3× more forcing than
+one M2 half-cycle at "the measured 0.64 m/s tip current". That 0.64 m/s was the
+M2 current from the Peleliu sea-level gradient, which `PRESSURE_ANALYSIS.md` §4
+withdraws. The 2–3× was U₀²T/8 = 2,289 m² s⁻¹ (shedding rate U²/2 over a
+sinusoidal half-cycle) against |Γ| = 5,400–6,100.
 
-For the second horn — circulation accumulating over several cycles — MacKinnon
-et al. (2019) measured at Palau's separation point where tides and sheared
-low-frequency flow act together, and conclude that including high-frequency
-oscillatory currents boosts the net flux of vorticity into the interior by a
-depth-dependent factor of **2 to 25**, warning that models omitting them
-misestimate momentum and energy loss. A 2–3× shortfall sits at the bottom of
-that range. Neither horn is confirmed for our event.
+*The measurement.* R/V *Thompson* sat 0.5–2 km from the tip (Pe2) from 05-21
+23:00 to 05-22 05:00 UTC, at ~1 m/s. Its wh300, 10–40 m mean within 3 km of the
+tip (Hydrographer-Analysis `code/peleliu_tip_adcp.py`, `notes/12` §7):
 
-For the first horn: Johnston et al.
-(2019) report that flow "intensifies" at the south point as it is constrained
-around the topography, and that the velocity difference across the wake eddy
-**exceeds 1 m/s** — against our array-averaged 0.64 m/s, a factor ~1.6 on
-Γ ~ UL. They also give an intrinsic shedding timescale of ~6 h from a Strouhal
-scaling (St ~ 0.2, L = 2 km, U = 0.5 m/s), close enough to the 6.2 h M2
-half-cycle that they suggest the tide "may effectively generate eddies." A
-1.6× stronger tip flow over a comparable interval plausibly closes a 2–3× gap.
-**Still a hypothesis** — it rests on their numbers at their moorings, not ours,
-and the Thompson ADCP remains the discriminating measurement.
+| UTC, 05-22 | flow past the tip |
+|---|---|
+| to 00:52 | southward, 0.1–0.26 m/s |
+| 01:00 | turns westward, 0.15–0.23 m/s |
+| 03:00–03:52 | 0.54–0.80 m/s |
+| 04:52–05:22 | **0.99–1.15 m/s**, toward 283–301° |
+
+At its strongest the jet is 1.1–1.2 m/s from 10 to 50 m and fades to 0.25 m/s
+by 85 m: about **60 m thick**. C05 (rotated 19.5°) tracks it from 02:00 on, at
+a jet/C05 ratio of 1.11 (0.70–1.46).
+
+*The budget.* ∫U²/2 dt from the 01:00 westward onset to 05:14, when the
+drifters were first in the eddy, is 2,391 m² s⁻¹ from the ship's own samples (a
+lower bound: the ship was not always in the jet core) and 3,311 m² s⁻¹ from
+C05 scaled to the jet (1,308–5,784 over the ratio range): **40–60 % of |Γ|**.
+At the measured strength the jet supplies the rest by ~07:00, and the whole
+westward event (to 11:12 at C05) sheds 3–4× |Γ|. So the first horn holds, by
+direct measurement: the flow past the tip is ~1.1 m/s, not 0.64, and **there is
+no shortfall** — one westward half-cycle is enough. Where the excess shed
+vorticity goes (shear layer, other eddies, friction) is not tested.
+
+*Depth.* In the eddy frame the ADCP's azimuthal velocity at 0.5–1.5 km is −0.47
+to −0.56 m/s over 10–40 m (drifters at the surface −0.41 to −0.46), −0.19 to
+−0.24 at 40–80 m, and ~0 below 80 m. **The vortex is 60–80 m deep**, as deep as
+the jet that made it.
+
+The earlier two-horn discussion (tip flow stronger than 0.64 m/s, or
+circulation accumulating over several cycles, after Johnston et al. 2019 and
+MacKinnon et al. 2019) is kept in `papers/README.md` entries 8 and 17 as the
+reasoning of its time.
 
 Two dimensionless numbers from that paper are worth adopting and are not
 currently computed anywhere here: an effective Reynolds number

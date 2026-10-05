@@ -61,6 +61,9 @@ def build(npz, out, dark=False):
     z, sp = r["zeta_circ"], r["zeta_jk_spread"]
     zj = r["zeta_jk"]
     med = np.nanmedian(z)
+    # leave-one-out spread as a percentage, computed exactly as eddy_analysis.py reports it
+    # (was hardcoded "17 %", the value before the minor-axis gate; it is now 16 %)
+    loo = 100 * np.nanmedian(np.abs(sp / zj))
 
     fig = plt.figure(figsize=(11.5, 8.2), facecolor=P["surface"])
     gs = fig.add_gridspec(3, 4, height_ratios=[.42, 1.15, 1.0],
@@ -76,7 +79,7 @@ def build(npz, out, dark=False):
 
     # ---- headline numbers -------------------------------------------------
     _tile(fig.add_subplot(gs[0, 0]), f"{med:.2e}".replace("e-0", "×10⁻") + " s⁻¹",
-          "median relative vorticity ζ", "circulation / Stokes, ±17 %", P, P["s1"])
+          "median relative vorticity ζ", f"circulation / Stokes, ±{loo:.0f} %", P, P["s1"])
     _tile(fig.add_subplot(gs[0, 1]), f"{med/f:.0f}", "Rossby number  ζ/f",
           f"f = {f:.2e} s⁻¹ at 6.99°N", P)
     _tile(fig.add_subplot(gs[0, 2]), f"{2*np.pi/abs(med/2)/3600:.1f} h",
@@ -175,7 +178,7 @@ def build(npz, out, dark=False):
              "least-squares velocity-gradient fit and a positions-only rotation rate.\n"
              "Divergence is < 2 % of |ζ| by three independent estimators; Okubo–Weiss < 0 in 100 % of "
              "windows.  Each ζ is an area average over the polygon.\n"
-             "Shaded band and the ±17 % are leave-one-drifter-out spreads — field curvature, not noise: "
+             f"Shaded band and the ±{loo:.0f} % are leave-one-drifter-out spreads — field curvature, not noise: "
              "they do not shrink with more averaging.",
              fontsize=7, color=P["ink3"], va="top", linespacing=1.7)
 

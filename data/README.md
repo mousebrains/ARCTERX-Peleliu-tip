@@ -60,7 +60,8 @@ temperature and the range bins. The per-bin velocity profiles are not kept.
 
 ⚠ **The rotation is NOT applied** to the stored velocities. C05's compass is
 skewed — suspected hard-iron from the iron anchor beneath it — and the
-correction is `W · exp(−i·14.4°)` absolute. Left to the analysis so the raw
+correction is `W · exp(−i·19.5°)` absolute (corrected 2026-10-05 from 14.4°;
+see `PRESSURE_ANALYSIS.md` §4). Left to the analysis so the raw
 instrument frame stays visible. See `PRESSURE_ANALYSIS.md` §4.
 
 **Excluded entirely**: `fits.mat` (72 MB, regenerable), the CORDC-delivered

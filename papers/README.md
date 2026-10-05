@@ -361,6 +361,12 @@ factor ~1.6 on Γ ~ UL. Combined with a 6 h shedding timescale against a 6.2 h
 M2 half-cycle, that plausibly closes the gap — **hypothesis, not settled**, and
 the discriminating measurement is still the Thompson ADCP.
 
+> **Update 2026-10-05.** Settled, for the first horn. The "array-averaged
+> 0.64 m s⁻¹" was the withdrawn pressure-gradient current (`PRESSURE_ANALYSIS.md`
+> §4). The Thompson wh300 measured 0.99–1.15 m s⁻¹ at the tip on 05-22
+> 04:52–05:22, ~60 m thick, and the shed circulation it implies covers |Γ|
+> within one westward half-cycle (`DRIFTER_ANALYSIS.md` §7).
+
 Two dimensionless numbers worth carrying over, both new to this project:
 
 ```
@@ -674,6 +680,12 @@ second of the two horns in §7 ("circulation accumulates over several cycles")
 rather than the first. Together with entry 8's local flow intensification,
 **both horns now have supporting evidence and they are not exclusive.** Neither
 is confirmed for our event.
+
+> **Update 2026-10-05.** The 2–3× shortfall this entry addresses does not exist:
+> it rested on the withdrawn 0.64 m s⁻¹ pressure-gradient current. With the tip
+> jet measured by the Thompson (~1.1 m s⁻¹), one westward half-cycle supplies
+> |Γ| (`DRIFTER_ANALYSIS.md` §7). Multi-cycle accumulation is not needed for this
+> event, though not excluded.
 
 ### 18. Ohlmann et al. (2017) — submesoscale kinematics from drifter clusters
 

@@ -168,8 +168,12 @@ ensembles gives **gain 0.983, angle +21.00°**, against the WAMOS project's
 independently derived 0.985 / +21.09° ($n = 2854$). Two analyses agreeing to
 0.09° is strong.
 
-The correct absolute correction is $W\cdot e^{-i\,14.4°}$, giving a principal
-axis of 113.4°/293.4°. Applying it changes east/west flow labels by 0.0 %,
+The Sig1000 itself reads 1.6° clockwise of the R/V *Thompson* wh300 over the
+crest (160 pairs within 0.3 km), so the absolute correction is
+$W\cdot e^{-i\,19.5°}$, giving a principal axis of 118.5°/298.5°. (Corrected
+2026-10-05: an earlier $e^{-i\,14.4°}$ and 113.4°/293.4° used a 6.6° Signature
+offset from a network fit that predates the Thompson cross-check.) Applying
+either changes east/west flow labels by 0.0 %,
 which is why the shedding-direction result of `PRESSURE_ANALYSIS.md` §8 is
 unaffected by it.
 

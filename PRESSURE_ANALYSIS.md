@@ -238,24 +238,44 @@ transfer against the Sig1000 (4–14 m band, |v| > 0.15 m/s):
 | angle | +21.09° | **+21.00°** (n = 2958) |
 
 Corrections are complex multipliers: `W·exp(−i·21.09°)` maps the Workhorse
-into the Sig1000 frame, and since SIG is itself +6.6° off true, the absolute
-correction is **`W_corr = W · exp(−i·14.4°)`**. The skew is stable — +20.2 to
-+21.7° in every 5-day chunk of the deployment.
+into the Sig1000 frame. The Sig1000 itself reads 1.6° clockwise of the
+R/V *Thompson* wh300 over the crest (160 pairs within 0.3 km, MAD 2.1°;
+Hydrographer-Analysis `notes/10` §2), so C05 reads 21.09 − 1.6 = 19.5°
+counterclockwise of true and the absolute correction is
+**`W_corr = W · exp(−i·19.5°)`**. The skew is stable — +20.2 to +21.7° in every
+5-day chunk of the deployment.
+
+> **Corrected 2026-10-05.** This section previously gave `exp(−i·14.4°)` and an
+> axis of 113.4°/293.4°. That used a 6.6° Signature offset from a WAMOS network
+> fit that predates the Thompson cross-check; Pat Welch: trust the Thompson
+> number. The evidence: binned by ship distance from the frame, the wh300-vs-Sig
+> angle is +1.3 to +1.6° within 0.3 km but grows farther out and **reverses sign
+> with flow direction** (−9 to −26° in ESE flow, +5 to +6° in WNW flow beyond
+> 0.3 km). A compass error cannot do that; flow steering by the bank can. The
+> network's 6.6° and the radar's bank-node angle rest on WNW-dominated samples
+> (Hydrographer-Analysis `code/sig_heading_sweep.py`, `notes/12` §8). The along-axis velocity, every event and every east/west label are
+> unchanged, because the principal axis rotates with the data (0.00 % of
+> ensembles change sign). `src/c05_events.py` regenerates the numbers below for
+> either rotation and reproduces the earlier ones at 14.4°.
 
 After correction:
 
 | | |
 |---|---|
-| principal axis | **113.4° / 293.4° true**, ellipticity 0.35 |
-| depth-averaged sd | 55.5 (east) / 21.3 (north) cm/s, max speed 220 cm/s |
-| phase-locked tide | 17 % east, 10 % north |
+| principal axis | **118.5° / 298.5° true**, ellipticity 0.35 |
+| depth-averaged sd | 55.5 (along) / 21.3 (cross) cm/s, max speed 220 cm/s — rotation-invariant (`src/c05_events.py` gives 56.1 / 19.7); earlier labeled east/north |
+| phase-locked tide | 17 % east, 10 % north (computed in the 14.4° frame; a 5° rotation mixes the components by sin 5° ≈ 9 %; not recomputed) |
 | **direction set by** | **subtidal flow** — sign(total) = sign(subtidal) 73 % of the time |
 
 The tide supplies 61 % of the along-axis *variance* but the subtidal flow sets
 the *sign*. That matters for shedding direction.
 
 **Event list**: `c05_high_flow_events.csv` — 141 events longer than 1 h above
-the 85th percentile (81 m/s threshold): **81 eastward, 60 westward**.
+the 85th percentile (81 cm/s threshold): **81 eastward, 60 westward**. The list
+is unchanged by the corrected rotation; only its header (axis bearing) changed.
+Its original generator was never committed; `src/c05_events.py` reimplements
+it and gets 138 events (77 east, 61 west) and the same 2023-05-22 04:12–11:12
+westward event, the difference being gap handling.
 
 The east/west labels are **insensitive to the rotation** (0.0 % of ensembles
 change sign under it), because the flow is strongly rectilinear. The rotation
@@ -398,11 +418,12 @@ by the subtidal flow, and the May 2023 regimes make a specific prediction
 the full multi-year C05 record. Note this supersedes the earlier plan to use
 pressure-derived tidal phase, which does not work (§4).
 
-**Circulation budget.** The observed eddy circulation Γ = −6114 m² s⁻¹ needs
-roughly 2–3× more forcing than one M2 half-cycle at the measured 0.64 m/s tip
-current would supply. Either the flow past the tip exceeds the array-averaged
-value or circulation accumulates over several cycles. The Thompson ADCP spot
-measurements could discriminate.
+**Circulation budget — resolved (2026-10-05).** The earlier "2–3× more forcing
+than one M2 half-cycle at the measured 0.64 m/s tip current" used the
+pressure-gradient current that §4 withdraws. The Thompson wh300 measured the
+tip jet directly: 0.99–1.15 m/s at 04:52–05:22 on 05-22, ~60 m thick. With it,
+the circulation shed by 05:14 is 40–60 % of |Γ|, and the westward event sheds
+3–4× |Γ|: no shortfall. See `DRIFTER_ANALYSIS.md` §7.
 
 **Unverified instrument rates.** CTD ~2 Hz, Sig1000 16 Hz, MicroRiders 1 kHz
 are from memory and have not been checked against the files. The MicroRiders

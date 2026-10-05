@@ -376,11 +376,18 @@ residual.
 
 ### Circulation budget
 
-$\Gamma \approx -5400$ to $-6100\ \mathrm{m^2 s^{-1}}$ requires roughly 2–3×
-more forcing than one M2 half-cycle at the measured 0.64 m s⁻¹ tip current
-supplies. Either the flow past the tip exceeds the array-averaged value, or
-circulation accumulates over several tidal cycles. This is open work; the
-Thompson ADCP spot measurements could discriminate.
+A separating boundary layer sheds circulation at the rate $U^2/2$, with $U$ the
+speed just outside it, so the circulation shed over $[t_a, t_b]$ is
+$\int U^2/2\,dt$. For a sinusoidal current of amplitude $U_0$ over an M2
+half-cycle $T/2$ this is $U_0^2 T/8$.
+
+*Corrected 2026-10-05.* With $U_0 = 0.64$ m s⁻¹ that gives 2,289 m² s⁻¹, which
+is where the earlier "2–3× short" came from — but 0.64 m s⁻¹ was the withdrawn
+pressure-gradient current. The R/V *Thompson* measured the tip jet directly
+(0.99–1.15 m/s, ~60 m thick; `DRIFTER_ANALYSIS.md` §7). Integrated from the
+westward onset (05-22 01:00) to the first drifter fix in the eddy (05:14) it
+gives 2,400–3,300 m² s⁻¹, 40–60 % of $|\Gamma| \approx 5{,}400$–$6{,}100$, and the
+rest within ~2 h at the same strength: one westward half-cycle is enough.
 
 ## References
 

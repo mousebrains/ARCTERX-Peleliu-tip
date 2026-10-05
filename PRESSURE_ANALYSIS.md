@@ -248,7 +248,12 @@ counterclockwise of true and the absolute correction is
 > **Corrected 2026-10-05.** This section previously gave `exp(−i·14.4°)` and an
 > axis of 113.4°/293.4°. That used a 6.6° Signature offset from a WAMOS network
 > fit that predates the Thompson cross-check; Pat Welch: trust the Thompson
-> number. The along-axis velocity, every event and every east/west label are
+> number. The evidence: binned by ship distance from the frame, the wh300-vs-Sig
+> angle is +1.3 to +1.6° within 0.3 km but grows farther out and **reverses sign
+> with flow direction** (−9 to −26° in ESE flow, +5 to +6° in WNW flow beyond
+> 0.3 km). A compass error cannot do that; flow steering by the bank can. The
+> network's 6.6° and the radar's bank-node angle rest on WNW-dominated samples
+> (Hydrographer-Analysis `code/sig_heading_sweep.py`, `notes/12` §8). The along-axis velocity, every event and every east/west label are
 > unchanged, because the principal axis rotates with the data (0.00 % of
 > ensembles change sign). `src/c05_events.py` regenerates the numbers below for
 > either rotation and reproduces the earlier ones at 14.4°.
